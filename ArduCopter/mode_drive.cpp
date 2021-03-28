@@ -41,7 +41,7 @@ void ModeDrive::get_pilot_input(float driveModeOutputs[])
     //Some PWM signal between 900 and 2100
     //set_output_norm() found in SRV_CHANNEL
     //force it to between 0 and 1
-    driveModeOutputs[SteeringOut] = channel_roll->get_control_in();
+    driveModeOutputs[SteeringOut] = (900 - channel_roll->get_control_in()) / (2100 - 900);
 
     // some value between 0 and 1
     //pwm_from_range found in SRV_CHANNEL
