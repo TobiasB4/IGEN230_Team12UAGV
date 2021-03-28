@@ -48,6 +48,4 @@ void ModeDrive::get_pilot_input(float driveModeOutputs[])
     //becomes throttle actuator value
     //function(actuator, value)
     driveModeOutputs[ThrottleOut] = Mode::get_pilot_desired_throttle();
-
-    AP_MotorsMulticopter::set_actuator_with_slew(AP_MotorsMulticopter::_actuator)
 }

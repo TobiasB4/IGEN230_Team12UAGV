@@ -20,13 +20,54 @@
  *
  */
 
-#define GSCALAR(v, name, def) { copter.g.v.vtype, name, Parameters::k_param_ ## v, &copter.g.v, {def_value : def} }
-#define ASCALAR(v, name, def) { copter.aparm.v.vtype, name, Parameters::k_param_ ## v, (const void *)&copter.aparm.v, {def_value : def} }
-#define GGROUP(v, name, class) { AP_PARAM_GROUP, name, Parameters::k_param_ ## v, &copter.g.v, {group_info : class::var_info} }
-#define GOBJECT(v, name, class) { AP_PARAM_GROUP, name, Parameters::k_param_ ## v, (const void *)&copter.v, {group_info : class::var_info} }
-#define GOBJECTPTR(v, name, class) { AP_PARAM_GROUP, name, Parameters::k_param_ ## v, (const void *)&copter.v, {group_info : class::var_info}, AP_PARAM_FLAG_POINTER }
-#define GOBJECTVARPTR(v, name, var_info_ptr) { AP_PARAM_GROUP, name, Parameters::k_param_ ## v, (const void *)&copter.v, {group_info_ptr : var_info_ptr}, AP_PARAM_FLAG_POINTER | AP_PARAM_FLAG_INFO_POINTER }
-#define GOBJECTN(v, pname, name, class) { AP_PARAM_GROUP, name, Parameters::k_param_ ## pname, (const void *)&copter.v, {group_info : class::var_info} }
+#define GSCALAR(v, name, def)                                         \
+    {                                                                 \
+        copter.g.v.vtype, name, Parameters::k_param_##v, &copter.g.v, \
+        {                                                             \
+        def_value:                                                    \
+            def                                                       \
+        }                                                             \
+    }
+#define ASCALAR(v, name, def)                                                               \
+    {                                                                                       \
+        copter.aparm.v.vtype, name, Parameters::k_param_##v, (const void *)&copter.aparm.v, \
+        {                                                                                   \
+        def_value:                                                                          \
+            def                                                                             \
+        }                                                                                   \
+    }
+#define GGROUP(v, name, class)                                      \
+    {                                                               \
+        AP_PARAM_GROUP, name, Parameters::k_param_##v, &copter.g.v, \
+        {                                                           \
+        group_info:                                                 \
+            class ::var_info                                        \
+        }                                                           \
+    }
+#define GOBJECT(v, name, class)                                                 \
+    {                                                                           \
+        AP_PARAM_GROUP, name, Parameters::k_param_##v, (const void *)&copter.v, \
+        {                                                                       \
+        group_info:                                                             \
+            class ::var_info                                                    \
+        }                                                                       \
+    }
+#define GOBJECTPTR(v, name, class)                                                                                                     \
+    {                                                                                                                                  \
+        AP_PARAM_GROUP, name, Parameters::k_param_##v, (const void *)&copter.v, {group_info : class ::var_info}, AP_PARAM_FLAG_POINTER \
+    }
+#define GOBJECTVARPTR(v, name, var_info_ptr)                                                                                                                        \
+    {                                                                                                                                                               \
+        AP_PARAM_GROUP, name, Parameters::k_param_##v, (const void *)&copter.v, {group_info_ptr : var_info_ptr}, AP_PARAM_FLAG_POINTER | AP_PARAM_FLAG_INFO_POINTER \
+    }
+#define GOBJECTN(v, pname, name, class)                                             \
+    {                                                                               \
+        AP_PARAM_GROUP, name, Parameters::k_param_##pname, (const void *)&copter.v, \
+        {                                                                           \
+        group_info:                                                                 \
+            class ::var_info                                                        \
+        }                                                                           \
+    }
 
 #if FRAME_CONFIG == HELI_FRAME
 // 6 here is AP_Motors::MOTOR_FRAME_HELI
@@ -41,21 +82,21 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
     // @ReadOnly: True
-    GSCALAR(format_version, "FORMAT_VERSION",   0),
+    GSCALAR(format_version, "FORMAT_VERSION", 0),
 
     // @Param: SYSID_THISMAV
     // @DisplayName: MAVLink system ID of this vehicle
     // @Description: Allows setting an individual MAVLink system id for this vehicle to distinguish it from others on the same network
     // @Range: 1 255
     // @User: Advanced
-    GSCALAR(sysid_this_mav, "SYSID_THISMAV",   MAV_SYSTEM_ID),
+    GSCALAR(sysid_this_mav, "SYSID_THISMAV", MAV_SYSTEM_ID),
 
     // @Param: SYSID_MYGCS
     // @DisplayName: My ground station number
     // @Description: Allows restricting radio overrides to only come from my ground station
     // @Range: 1 255
     // @User: Advanced
-    GSCALAR(sysid_my_gcs,   "SYSID_MYGCS",     255),
+    GSCALAR(sysid_my_gcs, "SYSID_MYGCS", 255),
 
     // @Param: PILOT_THR_FILT
     // @DisplayName: Throttle filter cutoff
@@ -64,7 +105,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: Hz
     // @Range: 0 10
     // @Increment: .5
-    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0),
+    GSCALAR(throttle_filt, "PILOT_THR_FILT", 0),
 
     // @Param: PILOT_TKOFF_ALT
     // @DisplayName: Pilot takeoff altitude
@@ -73,7 +114,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: cm
     // @Range: 0.0 1000.0
     // @Increment: 10
-    GSCALAR(pilot_takeoff_alt,  "PILOT_TKOFF_ALT",  PILOT_TKOFF_ALT_DEFAULT),
+    GSCALAR(pilot_takeoff_alt, "PILOT_TKOFF_ALT", PILOT_TKOFF_ALT_DEFAULT),
 
     // @Param: PILOT_THR_BHV
     // @DisplayName: Throttle stick behavior
@@ -85,7 +126,7 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: SERIAL
     // @Path: ../libraries/AP_SerialManager/AP_SerialManager.cpp
-    GOBJECT(serial_manager, "SERIAL",   AP_SerialManager),
+    GOBJECT(serial_manager, "SERIAL", AP_SerialManager),
 
     // @Param: TELEM_DELAY
     // @DisplayName: Telemetry startup delay
@@ -94,7 +135,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: s
     // @Range: 0 30
     // @Increment: 1
-    GSCALAR(telem_delay,            "TELEM_DELAY",     0),
+    GSCALAR(telem_delay, "TELEM_DELAY", 0),
 
     // @Param: GCS_PID_MASK
     // @DisplayName: GCS PID tuning mask
@@ -102,7 +143,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Advanced
     // @Values: 0:None,1:Roll,2:Pitch,4:Yaw,8:AccelZ
     // @Bitmask: 0:Roll,1:Pitch,2:Yaw,3:AccelZ
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask, "GCS_PID_MASK", 0),
 
 #if MODE_RTL_ENABLED == ENABLED
     // @Param: RTL_ALT
@@ -112,7 +153,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 200 8000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_altitude,   "RTL_ALT",     RTL_ALT),
+    GSCALAR(rtl_altitude, "RTL_ALT", RTL_ALT),
 
     // @Param: RTL_CONE_SLOPE
     // @DisplayName: RTL cone slope
@@ -121,7 +162,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Increment: .1
     // @Values: 0:Disabled,1:Shallow,3:Steep
     // @User: Standard
-    GSCALAR(rtl_cone_slope,   "RTL_CONE_SLOPE",     RTL_CONE_SLOPE_DEFAULT),
+    GSCALAR(rtl_cone_slope, "RTL_CONE_SLOPE", RTL_CONE_SLOPE_DEFAULT),
 
     // @Param: RTL_SPEED
     // @DisplayName: RTL speed
@@ -130,7 +171,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 2000
     // @Increment: 50
     // @User: Standard
-    GSCALAR(rtl_speed_cms,   "RTL_SPEED",     0),
+    GSCALAR(rtl_speed_cms, "RTL_SPEED", 0),
 
     // @Param: RTL_ALT_FINAL
     // @DisplayName: RTL Final Altitude
@@ -139,7 +180,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 1000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_alt_final,  "RTL_ALT_FINAL", RTL_ALT_FINAL),
+    GSCALAR(rtl_alt_final, "RTL_ALT_FINAL", RTL_ALT_FINAL),
 
     // @Param: RTL_CLIMB_MIN
     // @DisplayName: RTL minimum climb
@@ -148,7 +189,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 3000
     // @Increment: 10
     // @User: Standard
-    GSCALAR(rtl_climb_min,  "RTL_CLIMB_MIN",    RTL_CLIMB_MIN_DEFAULT),
+    GSCALAR(rtl_climb_min, "RTL_CLIMB_MIN", RTL_CLIMB_MIN_DEFAULT),
 
     // @Param: RTL_LOIT_TIME
     // @DisplayName: RTL loiter time
@@ -157,7 +198,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 60000
     // @Increment: 1000
     // @User: Standard
-    GSCALAR(rtl_loiter_time,      "RTL_LOIT_TIME",    RTL_LOITER_TIME),
+    GSCALAR(rtl_loiter_time, "RTL_LOIT_TIME", RTL_LOITER_TIME),
 
     // @Param: RTL_ALT_TYPE
     // @DisplayName: RTL mode altitude type
@@ -196,14 +237,14 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: Bitmask to enable Super Simple mode for some flight modes. Setting this to Disabled(0) will disable Super Simple Mode
     // @Values: 0:Disabled,1:Mode1,2:Mode2,3:Mode1+2,4:Mode3,5:Mode1+3,6:Mode2+3,7:Mode1+2+3,8:Mode4,9:Mode1+4,10:Mode2+4,11:Mode1+2+4,12:Mode3+4,13:Mode1+3+4,14:Mode2+3+4,15:Mode1+2+3+4,16:Mode5,17:Mode1+5,18:Mode2+5,19:Mode1+2+5,20:Mode3+5,21:Mode1+3+5,22:Mode2+3+5,23:Mode1+2+3+5,24:Mode4+5,25:Mode1+4+5,26:Mode2+4+5,27:Mode1+2+4+5,28:Mode3+4+5,29:Mode1+3+4+5,30:Mode2+3+4+5,31:Mode1+2+3+4+5,32:Mode6,33:Mode1+6,34:Mode2+6,35:Mode1+2+6,36:Mode3+6,37:Mode1+3+6,38:Mode2+3+6,39:Mode1+2+3+6,40:Mode4+6,41:Mode1+4+6,42:Mode2+4+6,43:Mode1+2+4+6,44:Mode3+4+6,45:Mode1+3+4+6,46:Mode2+3+4+6,47:Mode1+2+3+4+6,48:Mode5+6,49:Mode1+5+6,50:Mode2+5+6,51:Mode1+2+5+6,52:Mode3+5+6,53:Mode1+3+5+6,54:Mode2+3+5+6,55:Mode1+2+3+5+6,56:Mode4+5+6,57:Mode1+4+5+6,58:Mode2+4+5+6,59:Mode1+2+4+5+6,60:Mode3+4+5+6,61:Mode1+3+4+5+6,62:Mode2+3+4+5+6,63:Mode1+2+3+4+5+6
     // @User: Standard
-    GSCALAR(super_simple,   "SUPER_SIMPLE",     0),
+    GSCALAR(super_simple, "SUPER_SIMPLE", 0),
 
     // @Param: WP_YAW_BEHAVIOR
     // @DisplayName: Yaw behaviour during missions
     // @Description: Determines how the autopilot controls the yaw during missions and RTL
     // @Values: 0:Never change yaw, 1:Face next waypoint, 2:Face next waypoint except RTL, 3:Face along GPS course
     // @User: Standard
-    GSCALAR(wp_yaw_behavior,  "WP_YAW_BEHAVIOR",    WP_YAW_BEHAVIOR_DEFAULT),
+    GSCALAR(wp_yaw_behavior, "WP_YAW_BEHAVIOR", WP_YAW_BEHAVIOR_DEFAULT),
 
     // @Param: LAND_SPEED
     // @DisplayName: Land speed
@@ -212,7 +253,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 30 200
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed,             "LAND_SPEED",   LAND_SPEED),
+    GSCALAR(land_speed, "LAND_SPEED", LAND_SPEED),
 
     // @Param: LAND_SPEED_HIGH
     // @DisplayName: Land speed high
@@ -221,8 +262,8 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed_high,        "LAND_SPEED_HIGH",   0),
-    
+    GSCALAR(land_speed_high, "LAND_SPEED_HIGH", 0),
+
     // @Param: PILOT_SPEED_UP
     // @DisplayName: Pilot maximum vertical speed ascending
     // @Description: The maximum vertical ascending velocity the pilot may request in cm/s
@@ -230,7 +271,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed_up,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX),
+    GSCALAR(pilot_speed_up, "PILOT_SPEED_UP", PILOT_VELZ_MAX),
 
     // @Param: PILOT_ACCEL_Z
     // @DisplayName: Pilot vertical acceleration
@@ -239,14 +280,14 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_accel_z,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT),
+    GSCALAR(pilot_accel_z, "PILOT_ACCEL_Z", PILOT_ACCEL_Z_DEFAULT),
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel
     // @Values:  0:Disabled,1:Enabled always RTL,2:Enabled Continue with Mission in Auto Mode (Removed in 4.0+),3:Enabled always Land,4:Enabled always SmartRTL or RTL,5:Enabled always SmartRTL or Land
     // @User: Standard
-    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   FS_THR_ENABLED_ALWAYS_RTL),
+    GSCALAR(failsafe_throttle, "FS_THR_ENABLE", FS_THR_ENABLED_ALWAYS_RTL),
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -255,7 +296,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: PWM
     // @Increment: 1
     // @User: Standard
-    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",      FS_THR_VALUE_DEFAULT),
+    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE", FS_THR_VALUE_DEFAULT),
 
     // @Param: THR_DZ
     // @DisplayName: Throttle deadzone
@@ -264,69 +305,69 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 300
     // @Units: PWM
     // @Increment: 1
-    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT),
+    GSCALAR(throttle_deadzone, "THR_DZ", THR_DZ_DEFAULT),
 
     // @Param: FLTMODE1
     // @DisplayName: Flight Mode 1
     // @Description: Flight mode when Channel 5 pwm is <= 1230
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1),
+    GSCALAR(flight_mode1, "FLTMODE1", (uint8_t)FLIGHT_MODE_1),
 
     // @Param: FLTMODE2
     // @DisplayName: Flight Mode 2
     // @Description: Flight mode when Channel 5 pwm is >1230, <= 1360
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2),
+    GSCALAR(flight_mode2, "FLTMODE2", (uint8_t)FLIGHT_MODE_2),
 
     // @Param: FLTMODE3
     // @DisplayName: Flight Mode 3
     // @Description: Flight mode when Channel 5 pwm is >1360, <= 1490
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3),
+    GSCALAR(flight_mode3, "FLTMODE3", (uint8_t)FLIGHT_MODE_3),
 
     // @Param: FLTMODE4
     // @DisplayName: Flight Mode 4
     // @Description: Flight mode when Channel 5 pwm is >1490, <= 1620
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4),
+    GSCALAR(flight_mode4, "FLTMODE4", (uint8_t)FLIGHT_MODE_4),
 
     // @Param: FLTMODE5
     // @DisplayName: Flight Mode 5
     // @Description: Flight mode when Channel 5 pwm is >1620, <= 1749
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5),
+    GSCALAR(flight_mode5, "FLTMODE5", (uint8_t)FLIGHT_MODE_5),
 
     // @Param: FLTMODE6
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when Channel 5 pwm is >=1750
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Drive
     // @User: Standard
-    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6),
+    GSCALAR(flight_mode6, "FLTMODE6", (uint8_t)FLIGHT_MODE_6),
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
     // @Description: RC Channel to use for flight mode control
     // @Values: 0:Disabled,5:Channel5,6:Channel6,7:Channel7,8:Channel8,9:Channel9,10:Channel 10,11:Channel 11,12:Channel 12,13:Channel 13,14:Channel 14,15:Channel 15
     // @User: Advanced
-    GSCALAR(flight_mode_chan, "FLTMODE_CH",         CH_MODE_DEFAULT),
+    GSCALAR(flight_mode_chan, "FLTMODE_CH", CH_MODE_DEFAULT),
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial flight mode
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.
     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     (uint8_t)Mode::Number::STABILIZE),
+    GSCALAR(initial_mode, "INITIAL_MODE", (uint8_t)Mode::Number::STABILIZE),
 
     // @Param: SIMPLE
     // @DisplayName: Simple mode bitmask
     // @Description: Bitmask which holds which flight modes use simple heading mode (eg bit 0 = 1 means Flight Mode 0 uses simple mode)
     // @User: Advanced
-    GSCALAR(simple_modes, "SIMPLE",                 0),
+    GSCALAR(simple_modes, "SIMPLE", 0),
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
@@ -334,21 +375,21 @@ const AP_Param::Info Copter::var_info[] = {
     // @Values: 830:Default,894:Default+RCIN,958:Default+IMU,1854:Default+Motors,-6146:NearlyAll-AC315,45054:NearlyAll,131071:All+FastATT,262142:All+MotBatt,393214:All+FastIMU,397310:All+FastIMU+PID,655358:All+FullIMU,0:Disabled
     // @Bitmask: 0:ATTITUDE_FAST,1:ATTITUDE_MED,2:GPS,3:PM,4:CTUN,5:NTUN,6:RCIN,7:IMU,8:CMD,9:CURRENT,10:RCOUT,11:OPTFLOW,12:PID,13:COMPASS,14:INAV,15:CAMERA,17:MOTBATT,18:IMU_FAST,19:IMU_RAW
     // @User: Standard
-    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask, "LOG_BITMASK", DEFAULT_LOG_BITMASK),
 
     // @Param: ESC_CALIBRATION
     // @DisplayName: ESC Calibration
     // @Description: Controls whether ArduCopter will enter ESC calibration on the next restart.  Do not adjust this parameter manually.
     // @User: Advanced
     // @Values: 0:Normal Start-up, 1:Start-up in ESC Calibration mode if throttle high, 2:Start-up in ESC Calibration mode regardless of throttle, 3:Start-up and automatically calibrate ESCs, 9:Disabled
-    GSCALAR(esc_calibrate, "ESC_CALIBRATION",       0),
+    GSCALAR(esc_calibrate, "ESC_CALIBRATION", 0),
 
     // @Param: TUNE
     // @DisplayName: Channel 6 Tuning
     // @Description: Controls which parameters (normally PID gains) are being tuned with transmitter's channel 6 knob
     // @User: Standard
     // @Values: 0:None,1:Stab Roll/Pitch kP,4:Rate Roll/Pitch kP,5:Rate Roll/Pitch kI,21:Rate Roll/Pitch kD,3:Stab Yaw kP,6:Rate Yaw kP,26:Rate Yaw kD,56:Rate Yaw Filter,55:Motor Yaw Headroom,14:AltHold kP,7:Throttle Rate kP,34:Throttle Accel kP,35:Throttle Accel kI,36:Throttle Accel kD,12:Loiter Pos kP,22:Velocity XY kP,28:Velocity XY kI,10:WP Speed,25:Acro RollPitch kP,40:Acro Yaw kP,45:RC Feel,13:Heli Ext Gyro,38:Declination,39:Circle Rate,41:RangeFinder Gain,46:Rate Pitch kP,47:Rate Pitch kI,48:Rate Pitch kD,49:Rate Roll kP,50:Rate Roll kI,51:Rate Roll kD,52:Rate Pitch FF,53:Rate Roll FF,54:Rate Yaw FF,58:SysID Magnitude
-    GSCALAR(radio_tuning, "TUNE",                   0),
+    GSCALAR(radio_tuning, "TUNE", 0),
 
     // @Param: FRAME_TYPE
     // @DisplayName: Frame Type (+, X, V, etc)
@@ -360,7 +401,7 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: ARMING_
     // @Path: ../libraries/AP_Arming/AP_Arming.cpp
-    GOBJECT(arming,                 "ARMING_", AP_Arming_Copter),
+    GOBJECT(arming, "ARMING_", AP_Arming_Copter),
 
     // @Param: DISARM_DELAY
     // @DisplayName: Disarm delay
@@ -368,15 +409,15 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: s
     // @Range: 0 127
     // @User: Advanced
-    GSCALAR(disarm_delay, "DISARM_DELAY",           AUTO_DISARMING_DELAY),
-    
+    GSCALAR(disarm_delay, "DISARM_DELAY", AUTO_DISARMING_DELAY),
+
     // @Param: ANGLE_MAX
     // @DisplayName: Angle Max
     // @Description: Maximum lean angle in all flight modes
     // @Units: cdeg
     // @Range: 1000 8000
     // @User: Advanced
-    ASCALAR(angle_max, "ANGLE_MAX",                 DEFAULT_ANGLE_MAX),
+    ASCALAR(angle_max, "ANGLE_MAX", DEFAULT_ANGLE_MAX),
 
 #if MODE_POSHOLD_ENABLED == ENABLED
     // @Param: PHLD_BRAKE_RATE
@@ -385,7 +426,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: deg/s
     // @Range: 4 12
     // @User: Advanced
-    GSCALAR(poshold_brake_rate, "PHLD_BRAKE_RATE",  POSHOLD_BRAKE_RATE_DEFAULT),
+    GSCALAR(poshold_brake_rate, "PHLD_BRAKE_RATE", POSHOLD_BRAKE_RATE_DEFAULT),
 
     // @Param: PHLD_BRAKE_ANGLE
     // @DisplayName: PosHold braking angle max
@@ -393,7 +434,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: cdeg
     // @Range: 2000 4500
     // @User: Advanced
-    GSCALAR(poshold_brake_angle_max, "PHLD_BRAKE_ANGLE",  POSHOLD_BRAKE_ANGLE_DEFAULT),
+    GSCALAR(poshold_brake_angle_max, "PHLD_BRAKE_ANGLE", POSHOLD_BRAKE_ANGLE_DEFAULT),
 #endif
 
     // @Param: LAND_REPOSITION
@@ -401,28 +442,28 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: Enables user input during LAND mode, the landing phase of RTL, and auto mode landings.
     // @Values: 0:No repositioning, 1:Repositioning
     // @User: Advanced
-    GSCALAR(land_repositioning, "LAND_REPOSITION",     LAND_REPOSITION_DEFAULT),
+    GSCALAR(land_repositioning, "LAND_REPOSITION", LAND_REPOSITION_DEFAULT),
 
     // @Param: FS_EKF_ACTION
     // @DisplayName: EKF Failsafe Action
     // @Description: Controls the action that will be taken when an EKF failsafe is invoked
     // @Values: 1:Land, 2:AltHold, 3:Land even in Stabilize
     // @User: Advanced
-    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT),
+    GSCALAR(fs_ekf_action, "FS_EKF_ACTION", FS_EKF_ACTION_DEFAULT),
 
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass and velocity variance
     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
     // @User: Advanced
-    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT),
+    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH", FS_EKF_THRESHOLD_DEFAULT),
 
     // @Param: FS_CRASH_CHECK
     // @DisplayName: Crash check enable
     // @Description: This enables automatic crash checking. When enabled the motors will disarm if a crash is detected.
     // @Values: 0:Disabled, 1:Enabled
     // @User: Advanced
-    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    1),
+    GSCALAR(fs_crash_check, "FS_CRASH_CHECK", 1),
 
     // @Param: RC_SPEED
     // @DisplayName: ESC Update Speed
@@ -431,21 +472,21 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 490
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED),
+    GSCALAR(rc_speed, "RC_SPEED", RC_FAST_SPEED),
 
     // @Param: ACRO_RP_P
     // @DisplayName: Acro Roll and Pitch P gain
     // @Description: Converts pilot roll and pitch into a desired rate of rotation in ACRO and SPORT mode.  Higher values mean faster rate of rotation.
     // @Range: 1 10
     // @User: Standard
-    GSCALAR(acro_rp_p,                 "ACRO_RP_P",           ACRO_RP_P),
+    GSCALAR(acro_rp_p, "ACRO_RP_P", ACRO_RP_P),
 
     // @Param: ACRO_YAW_P
     // @DisplayName: Acro Yaw P gain
     // @Description: Converts pilot yaw input into a desired rate of rotation.  Higher values mean faster rate of rotation.
     // @Range: 1 10
     // @User: Standard
-    GSCALAR(acro_yaw_p,                 "ACRO_YAW_P",           ACRO_YAW_P),
+    GSCALAR(acro_yaw_p, "ACRO_YAW_P", ACRO_YAW_P),
 
 #if MODE_ACRO_ENABLED == ENABLED || MODE_SPORT_ENABLED == ENABLED
     // @Param: ACRO_BAL_ROLL
@@ -454,7 +495,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_roll,      "ACRO_BAL_ROLL",    ACRO_BALANCE_ROLL),
+    GSCALAR(acro_balance_roll, "ACRO_BAL_ROLL", ACRO_BALANCE_ROLL),
 
     // @Param: ACRO_BAL_PITCH
     // @DisplayName: Acro Balance Pitch
@@ -462,7 +503,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_pitch,     "ACRO_BAL_PITCH",   ACRO_BALANCE_PITCH),
+    GSCALAR(acro_balance_pitch, "ACRO_BAL_PITCH", ACRO_BALANCE_PITCH),
 #endif
 
 #if MODE_ACRO_ENABLED == ENABLED
@@ -471,7 +512,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: Type of trainer used in acro mode
     // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited
     // @User: Advanced
-    GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED),
+    GSCALAR(acro_trainer, "ACRO_TRAINER", (uint8_t)ModeAcro::Trainer::LIMITED),
 
     // @Param: ACRO_RP_EXPO
     // @DisplayName: Acro Roll/Pitch Expo
@@ -479,20 +520,20 @@ const AP_Param::Info Copter::var_info[] = {
     // @Values: 0:Disabled,0.1:Very Low,0.2:Low,0.3:Medium,0.4:High,0.5:Very High
     // @Range: -0.5 1.0
     // @User: Advanced
-    GSCALAR(acro_rp_expo,  "ACRO_RP_EXPO",    ACRO_RP_EXPO_DEFAULT),
+    GSCALAR(acro_rp_expo, "ACRO_RP_EXPO", ACRO_RP_EXPO_DEFAULT),
 #endif
 
-    // variables not in the g class which contain EEPROM saved variables
+// variables not in the g class which contain EEPROM saved variables
 
 #if CAMERA == ENABLED
     // @Group: CAM_
     // @Path: ../libraries/AP_Camera/AP_Camera.cpp
-    GOBJECT(camera,           "CAM_", AP_Camera),
+    GOBJECT(camera, "CAM_", AP_Camera),
 #endif
 
     // @Group: RELAY_
     // @Path: ../libraries/AP_Relay/AP_Relay.cpp
-    GOBJECT(relay,                  "RELAY_", AP_Relay),
+    GOBJECT(relay, "RELAY_", AP_Relay),
 
 #if PARACHUTE == ENABLED
     // @Group: CHUTE_
@@ -503,7 +544,7 @@ const AP_Param::Info Copter::var_info[] = {
 #if LANDING_GEAR_ENABLED == ENABLED
     // @Group: LGR_
     // @Path: ../libraries/AP_LandingGear/AP_LandingGear.cpp
-    GOBJECT(landinggear,    "LGR_", AP_LandingGear),
+    GOBJECT(landinggear, "LGR_", AP_LandingGear),
 #endif
 
 #if FRAME_CONFIG == HELI_FRAME
@@ -514,15 +555,15 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: COMPASS_
     // @Path: ../libraries/AP_Compass/AP_Compass.cpp
-    GOBJECT(compass,        "COMPASS_", Compass),
+    GOBJECT(compass, "COMPASS_", Compass),
 
     // @Group: INS_
     // @Path: ../libraries/AP_InertialSensor/AP_InertialSensor.cpp
-    GOBJECT(ins,            "INS_", AP_InertialSensor),
+    GOBJECT(ins, "INS_", AP_InertialSensor),
 
     // @Group: WPNAV_
     // @Path: ../libraries/AC_WPNav/AC_WPNav.cpp
-    GOBJECTPTR(wp_nav, "WPNAV_",       AC_WPNav),
+    GOBJECTPTR(wp_nav, "WPNAV_", AC_WPNav),
 
     // @Group: LOIT_
     // @Path: ../libraries/AC_WPNav/AC_Loiter.cpp
@@ -531,11 +572,11 @@ const AP_Param::Info Copter::var_info[] = {
 #if MODE_CIRCLE_ENABLED == ENABLED
     // @Group: CIRCLE_
     // @Path: ../libraries/AC_WPNav/AC_Circle.cpp
-    GOBJECTPTR(circle_nav, "CIRCLE_",  AC_Circle),
+    GOBJECTPTR(circle_nav, "CIRCLE_", AC_Circle),
 #endif
 
-    // @Group: ATC_
-    // @Path: ../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Multi.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Heli.cpp
+// @Group: ATC_
+// @Path: ../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Multi.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Heli.cpp
 #if FRAME_CONFIG == HELI_FRAME
     GOBJECTPTR(attitude_control, "ATC_", AC_AttitudeControl_Heli),
 #else
@@ -548,76 +589,76 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: SR0_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[0],  gcs0,       "SR0_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[0], gcs0, "SR0_", GCS_MAVLINK_Parameters),
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 2
     // @Group: SR1_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[1],  gcs1,       "SR1_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[1], gcs1, "SR1_", GCS_MAVLINK_Parameters),
 #endif
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 3
     // @Group: SR2_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[2],  gcs2,       "SR2_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[2], gcs2, "SR2_", GCS_MAVLINK_Parameters),
 #endif
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 4
     // @Group: SR3_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[3],  gcs3,       "SR3_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[3], gcs3, "SR3_", GCS_MAVLINK_Parameters),
 #endif
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 5
     // @Group: SR4_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[4],  gcs4,       "SR4_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[4], gcs4, "SR4_", GCS_MAVLINK_Parameters),
 #endif
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 6
     // @Group: SR5_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[5],  gcs5,       "SR5_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[5], gcs5, "SR5_", GCS_MAVLINK_Parameters),
 #endif
 
 #if MAVLINK_COMM_NUM_BUFFERS >= 7
     // @Group: SR6_
     // @Path: GCS_Mavlink.cpp
-    GOBJECTN(_gcs.chan_parameters[6],  gcs6,       "SR6_",     GCS_MAVLINK_Parameters),
+    GOBJECTN(_gcs.chan_parameters[6], gcs6, "SR6_", GCS_MAVLINK_Parameters),
 #endif
 
     // @Group: AHRS_
     // @Path: ../libraries/AP_AHRS/AP_AHRS.cpp
-    GOBJECT(ahrs,                   "AHRS_",    AP_AHRS),
+    GOBJECT(ahrs, "AHRS_", AP_AHRS),
 
 #if HAL_MOUNT_ENABLED
     // @Group: MNT
     // @Path: ../libraries/AP_Mount/AP_Mount.cpp
-    GOBJECT(camera_mount,           "MNT",  AP_Mount),
+    GOBJECT(camera_mount, "MNT", AP_Mount),
 #endif
 
     // @Group: LOG
     // @Path: ../libraries/AP_Logger/AP_Logger.cpp
-    GOBJECT(logger,           "LOG",  AP_Logger),
+    GOBJECT(logger, "LOG", AP_Logger),
 
     // @Group: BATT
     // @Path: ../libraries/AP_BattMonitor/AP_BattMonitor.cpp
-    GOBJECT(battery,                "BATT",         AP_BattMonitor),
+    GOBJECT(battery, "BATT", AP_BattMonitor),
 
     // @Group: BRD_
     // @Path: ../libraries/AP_BoardConfig/AP_BoardConfig.cpp
-    GOBJECT(BoardConfig,            "BRD_",       AP_BoardConfig),
+    GOBJECT(BoardConfig, "BRD_", AP_BoardConfig),
 
 #if HAL_MAX_CAN_PROTOCOL_DRIVERS
     // @Group: CAN_
     // @Path: ../libraries/AP_CANManager/AP_CANManager.cpp
-    GOBJECT(can_mgr,        "CAN_",       AP_CANManager),
+    GOBJECT(can_mgr, "CAN_", AP_CANManager),
 #endif
 
 #if SPRAYER_ENABLED == ENABLED
     // @Group: SPRAY_
     // @Path: ../libraries/AC_Sprayer/AC_Sprayer.cpp
-    GOBJECT(sprayer,                "SPRAY_",       AC_Sprayer),
+    GOBJECT(sprayer, "SPRAY_", AC_Sprayer),
 #endif
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
@@ -640,34 +681,34 @@ const AP_Param::Info Copter::var_info[] = {
 #if AC_FENCE == ENABLED
     // @Group: FENCE_
     // @Path: ../libraries/AC_Fence/AC_Fence.cpp
-    GOBJECT(fence,      "FENCE_",   AC_Fence),
+    GOBJECT(fence, "FENCE_", AC_Fence),
 #endif
 
-    // @Group: AVOID_
-    // @Path: ../libraries/AC_Avoidance/AC_Avoid.cpp
+// @Group: AVOID_
+// @Path: ../libraries/AC_Avoidance/AC_Avoid.cpp
 #if AC_AVOID_ENABLED == ENABLED
-    GOBJECT(avoid,      "AVOID_",   AC_Avoid),
+    GOBJECT(avoid, "AVOID_", AC_Avoid),
 #endif
 
 #if AC_RALLY == ENABLED
     // @Group: RALLY_
     // @Path: AP_Rally.cpp,../libraries/AP_Rally/AP_Rally.cpp
-    GOBJECT(rally,      "RALLY_",   AP_Rally_Copter),
+    GOBJECT(rally, "RALLY_", AP_Rally_Copter),
 #endif
 
 #if FRAME_CONFIG == HELI_FRAME
     // @Group: H_
     // @Path: ../libraries/AP_Motors/AP_MotorsHeli_Single.cpp,../libraries/AP_Motors/AP_MotorsHeli_Dual.cpp,../libraries/AP_Motors/AP_MotorsHeli.cpp
-    GOBJECTVARPTR(motors, "H_",        &copter.motors_var_info),
+    GOBJECTVARPTR(motors, "H_", &copter.motors_var_info),
 #else
     // @Group: MOT_
     // @Path: ../libraries/AP_Motors/AP_MotorsMulticopter.cpp
-    GOBJECTVARPTR(motors, "MOT_",      &copter.motors_var_info),
+    GOBJECTVARPTR(motors, "MOT_", &copter.motors_var_info),
 #endif
 
     // @Group: RCMAP_
     // @Path: ../libraries/AP_RCMapper/AP_RCMapper.cpp
-    GOBJECT(rcmap, "RCMAP_",        RCMapper),
+    GOBJECT(rcmap, "RCMAP_", RCMapper),
 
 #if HAL_NAVEKF2_AVAILABLE
     // @Group: EK2_
@@ -689,24 +730,24 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: RSSI_
     // @Path: ../libraries/AP_RSSI/AP_RSSI.cpp
-    GOBJECT(rssi, "RSSI_",  AP_RSSI),
-    
+    GOBJECT(rssi, "RSSI_", AP_RSSI),
+
 #if RANGEFINDER_ENABLED == ENABLED
     // @Group: RNGFND
     // @Path: ../libraries/AP_RangeFinder/AP_RangeFinder.cpp
-    GOBJECT(rangefinder,   "RNGFND", RangeFinder),
+    GOBJECT(rangefinder, "RNGFND", RangeFinder),
 #endif
 
 #if AP_TERRAIN_AVAILABLE && AC_TERRAIN
     // @Group: TERRAIN_
     // @Path: ../libraries/AP_Terrain/AP_Terrain.cpp
-    GOBJECT(terrain,                "TERRAIN_", AP_Terrain),
+    GOBJECT(terrain, "TERRAIN_", AP_Terrain),
 #endif
 
 #if OPTFLOW == ENABLED
     // @Group: FLOW
     // @Path: ../libraries/AP_OpticalFlow/OpticalFlow.cpp
-    GOBJECT(optflow,   "FLOW", OpticalFlow),
+    GOBJECT(optflow, "FLOW", OpticalFlow),
 #endif
 
 #if PRECISION_LANDING == ENABLED
@@ -724,7 +765,7 @@ const AP_Param::Info Copter::var_info[] = {
 #if HAL_ADSB_ENABLED
     // @Group: ADSB_
     // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp
-    GOBJECT(adsb,                "ADSB_", AP_ADSB),
+    GOBJECT(adsb, "ADSB_", AP_ADSB),
 
     // @Group: AVD_
     // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp
@@ -733,7 +774,7 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: NTF_
     // @Path: ../libraries/AP_Notify/AP_Notify.cpp
-    GOBJECT(notify, "NTF_",  AP_Notify),
+    GOBJECT(notify, "NTF_", AP_Notify),
 
 #if MODE_THROW_ENABLED == ENABLED
     // @Param: THROW_MOT_START
@@ -752,14 +793,13 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group:
     // @Path: Parameters.cpp
-    GOBJECT(g2, "",  ParametersG2),
+    GOBJECT(g2, "", ParametersG2),
 
     // @Group:
     // @Path: ../libraries/AP_Vehicle/AP_Vehicle.cpp
-    { AP_PARAM_GROUP, "", Parameters::k_param_vehicle, (const void *)&copter, {group_info : AP_Vehicle::var_info} },
+    {AP_PARAM_GROUP, "", Parameters::k_param_vehicle, (const void *)&copter, {group_info : AP_Vehicle::var_info}},
 
-    AP_VAREND
-};
+    AP_VAREND};
 
 /*
   2nd group of parameters
@@ -942,7 +982,7 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
 #if AUTOTUNE_ENABLED == ENABLED
     // @Group: AUTOTUNE_
     // @Path: ../libraries/AC_AutoTune/AC_AutoTune.cpp
-    AP_SUBGROUPPTR(autotune_ptr, "AUTOTUNE_",  29, ParametersG2, AutoTune),
+    AP_SUBGROUPPTR(autotune_ptr, "AUTOTUNE_", 29, ParametersG2, AutoTune),
 #endif
 
 #ifdef ENABLE_SCRIPTING
@@ -1054,8 +1094,7 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("FLIGHT_OPTIONS", 44, ParametersG2, flight_options, 0),
 
-    AP_GROUPEND
-};
+    AP_GROUPEND};
 
 /*
   constructor for g2 object
@@ -1063,38 +1102,50 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
 ParametersG2::ParametersG2(void)
     : temp_calibration() // this doesn't actually need constructing, but removing it here is problematic syntax-wise
 #if BEACON_ENABLED == ENABLED
-    , beacon(copter.serial_manager)
+      ,
+      beacon(copter.serial_manager)
 #endif
 #if PROXIMITY_ENABLED == ENABLED
-    , proximity()
+      ,
+      proximity()
 #endif
 #if ADVANCED_FAILSAFE == ENABLED
-    ,afs(copter.mode_auto.mission)
+      ,
+      afs(copter.mode_auto.mission)
 #endif
 #if MODE_SMARTRTL_ENABLED == ENABLED
-    ,smart_rtl()
+      ,
+      smart_rtl()
 #endif
 #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    ,mode_flowhold_ptr(&copter.mode_flowhold)
+      ,
+      mode_flowhold_ptr(&copter.mode_flowhold)
 #endif
 #if MODE_FOLLOW_ENABLED == ENABLED
-    ,follow()
+      ,
+      follow()
 #endif
 #ifdef USER_PARAMS_ENABLED
-    ,user_parameters()
+      ,
+      user_parameters()
 #endif
 #if AUTOTUNE_ENABLED == ENABLED
-    ,autotune_ptr(&copter.autotune)
+      ,
+      autotune_ptr(&copter.autotune)
 #endif
 #if MODE_SYSTEMID_ENABLED == ENABLED
-    ,mode_systemid_ptr(&copter.mode_systemid)
+      ,
+      mode_systemid_ptr(&copter.mode_systemid)
 #endif
 #if MODE_AUTOROTATE_ENABLED == ENABLED
-    ,arot()
+      ,
+      arot()
 #endif
-    ,button_ptr(&copter.button)
+      ,
+      button_ptr(&copter.button)
 #if MODE_ZIGZAG_ENABLED == ENABLED
-    ,mode_zigzag_ptr(&copter.mode_zigzag)
+      ,
+      mode_zigzag_ptr(&copter.mode_zigzag)
 #endif
 {
     AP_Param::setup_object_defaults(this, var_info);
@@ -1114,29 +1165,30 @@ ParametersG2::ParametersG2(void)
   old object. This should be zero for top level parameters.
  */
 const AP_Param::ConversionInfo conversion_table[] = {
-    { Parameters::k_param_log_bitmask_old,    0,      AP_PARAM_INT16, "LOG_BITMASK" },
-    { Parameters::k_param_serial0_baud,       0,      AP_PARAM_INT16, "SERIAL0_BAUD" },
-    { Parameters::k_param_serial1_baud,       0,      AP_PARAM_INT16, "SERIAL1_BAUD" },
-    { Parameters::k_param_serial2_baud,       0,      AP_PARAM_INT16, "SERIAL2_BAUD" },
-    { Parameters::k_param_arming_check_old,   0,      AP_PARAM_INT8,  "ARMING_CHECK" },
+    {Parameters::k_param_log_bitmask_old, 0, AP_PARAM_INT16, "LOG_BITMASK"},
+    {Parameters::k_param_serial0_baud, 0, AP_PARAM_INT16, "SERIAL0_BAUD"},
+    {Parameters::k_param_serial1_baud, 0, AP_PARAM_INT16, "SERIAL1_BAUD"},
+    {Parameters::k_param_serial2_baud, 0, AP_PARAM_INT16, "SERIAL2_BAUD"},
+    {Parameters::k_param_arming_check_old, 0, AP_PARAM_INT8, "ARMING_CHECK"},
     // battery
-    { Parameters::k_param_fs_batt_voltage,    0,      AP_PARAM_FLOAT,  "BATT_LOW_VOLT" },
-    { Parameters::k_param_fs_batt_mah,        0,      AP_PARAM_FLOAT,  "BATT_LOW_MAH" },
-    { Parameters::k_param_failsafe_battery_enabled,0, AP_PARAM_INT8,   "BATT_FS_LOW_ACT" },
+    {Parameters::k_param_fs_batt_voltage, 0, AP_PARAM_FLOAT, "BATT_LOW_VOLT"},
+    {Parameters::k_param_fs_batt_mah, 0, AP_PARAM_FLOAT, "BATT_LOW_MAH"},
+    {Parameters::k_param_failsafe_battery_enabled, 0, AP_PARAM_INT8, "BATT_FS_LOW_ACT"},
 
-    { Parameters::Parameters::k_param_ch7_option_old,   0,      AP_PARAM_INT8,  "RC7_OPTION" },
-    { Parameters::Parameters::k_param_ch8_option_old,   0,      AP_PARAM_INT8,  "RC8_OPTION" },
-    { Parameters::Parameters::k_param_ch9_option_old,   0,      AP_PARAM_INT8,  "RC9_OPTION" },
-    { Parameters::Parameters::k_param_ch10_option_old,   0,      AP_PARAM_INT8,  "RC10_OPTION" },
-    { Parameters::Parameters::k_param_ch11_option_old,   0,      AP_PARAM_INT8,  "RC11_OPTION" },
-    { Parameters::Parameters::k_param_ch12_option_old,   0,      AP_PARAM_INT8,  "RC12_OPTION" },
-    { Parameters::k_param_compass_enabled_deprecated,    0,      AP_PARAM_INT8, "COMPASS_ENABLE" },
-    { Parameters::k_param_arming,             2,     AP_PARAM_INT16,  "ARMING_CHECK" },
+    {Parameters::Parameters::k_param_ch7_option_old, 0, AP_PARAM_INT8, "RC7_OPTION"},
+    {Parameters::Parameters::k_param_ch8_option_old, 0, AP_PARAM_INT8, "RC8_OPTION"},
+    {Parameters::Parameters::k_param_ch9_option_old, 0, AP_PARAM_INT8, "RC9_OPTION"},
+    {Parameters::Parameters::k_param_ch10_option_old, 0, AP_PARAM_INT8, "RC10_OPTION"},
+    {Parameters::Parameters::k_param_ch11_option_old, 0, AP_PARAM_INT8, "RC11_OPTION"},
+    {Parameters::Parameters::k_param_ch12_option_old, 0, AP_PARAM_INT8, "RC12_OPTION"},
+    {Parameters::k_param_compass_enabled_deprecated, 0, AP_PARAM_INT8, "COMPASS_ENABLE"},
+    {Parameters::k_param_arming, 2, AP_PARAM_INT16, "ARMING_CHECK"},
 };
 
 void Copter::load_parameters(void)
 {
-    if (!AP_Param::check_var_info()) {
+    if (!AP_Param::check_var_info())
+    {
         hal.console->printf("Bad var table\n");
         AP_HAL::panic("Bad var table");
     }
@@ -1146,7 +1198,8 @@ void Copter::load_parameters(void)
     hal.util->set_soft_armed(false);
 
     if (!g.format_version.load() ||
-        g.format_version != Parameters::k_format_version) {
+        g.format_version != Parameters::k_format_version)
+    {
 
         // erase all parameters
         hal.console->printf("Firmware change: erasing EEPROM...\n");
@@ -1175,7 +1228,6 @@ void Copter::load_parameters(void)
 
     // setup AP_Param frame type flags
     AP_Param::set_frame_type_flags(AP_PARAM_FRAME_COPTER);
-
 }
 
 // handle conversion of PID gains
@@ -1183,62 +1235,60 @@ void Copter::convert_pid_parameters(void)
 {
     // conversion info
     const AP_Param::ConversionInfo pid_conversion_info[] = {
-        { Parameters::k_param_pid_rate_roll, 0, AP_PARAM_FLOAT, "ATC_RAT_RLL_P" },
-        { Parameters::k_param_pid_rate_roll, 1, AP_PARAM_FLOAT, "ATC_RAT_RLL_I" },
-        { Parameters::k_param_pid_rate_roll, 2, AP_PARAM_FLOAT, "ATC_RAT_RLL_D" },
-        { Parameters::k_param_pid_rate_pitch, 0, AP_PARAM_FLOAT, "ATC_RAT_PIT_P" },
-        { Parameters::k_param_pid_rate_pitch, 1, AP_PARAM_FLOAT, "ATC_RAT_PIT_I" },
-        { Parameters::k_param_pid_rate_pitch, 2, AP_PARAM_FLOAT, "ATC_RAT_PIT_D" },
-        { Parameters::k_param_pid_rate_yaw, 0, AP_PARAM_FLOAT, "ATC_RAT_YAW_P" },
-        { Parameters::k_param_pid_rate_yaw, 1, AP_PARAM_FLOAT, "ATC_RAT_YAW_I" },
-        { Parameters::k_param_pid_rate_yaw, 2, AP_PARAM_FLOAT, "ATC_RAT_YAW_D" },
+        {Parameters::k_param_pid_rate_roll, 0, AP_PARAM_FLOAT, "ATC_RAT_RLL_P"},
+        {Parameters::k_param_pid_rate_roll, 1, AP_PARAM_FLOAT, "ATC_RAT_RLL_I"},
+        {Parameters::k_param_pid_rate_roll, 2, AP_PARAM_FLOAT, "ATC_RAT_RLL_D"},
+        {Parameters::k_param_pid_rate_pitch, 0, AP_PARAM_FLOAT, "ATC_RAT_PIT_P"},
+        {Parameters::k_param_pid_rate_pitch, 1, AP_PARAM_FLOAT, "ATC_RAT_PIT_I"},
+        {Parameters::k_param_pid_rate_pitch, 2, AP_PARAM_FLOAT, "ATC_RAT_PIT_D"},
+        {Parameters::k_param_pid_rate_yaw, 0, AP_PARAM_FLOAT, "ATC_RAT_YAW_P"},
+        {Parameters::k_param_pid_rate_yaw, 1, AP_PARAM_FLOAT, "ATC_RAT_YAW_I"},
+        {Parameters::k_param_pid_rate_yaw, 2, AP_PARAM_FLOAT, "ATC_RAT_YAW_D"},
 #if FRAME_CONFIG == HELI_FRAME
-        { Parameters::k_param_pid_rate_roll,  4, AP_PARAM_FLOAT, "ATC_RAT_RLL_VFF" },
-        { Parameters::k_param_pid_rate_pitch, 4, AP_PARAM_FLOAT, "ATC_RAT_PIT_VFF" },
-        { Parameters::k_param_pid_rate_yaw  , 4, AP_PARAM_FLOAT, "ATC_RAT_YAW_VFF" },
+        {Parameters::k_param_pid_rate_roll, 4, AP_PARAM_FLOAT, "ATC_RAT_RLL_VFF"},
+        {Parameters::k_param_pid_rate_pitch, 4, AP_PARAM_FLOAT, "ATC_RAT_PIT_VFF"},
+        {Parameters::k_param_pid_rate_yaw, 4, AP_PARAM_FLOAT, "ATC_RAT_YAW_VFF"},
 #endif
     };
     const AP_Param::ConversionInfo imax_conversion_info[] = {
-        { Parameters::k_param_pid_rate_roll,  5, AP_PARAM_FLOAT, "ATC_RAT_RLL_IMAX" },
-        { Parameters::k_param_pid_rate_pitch, 5, AP_PARAM_FLOAT, "ATC_RAT_PIT_IMAX" },
-        { Parameters::k_param_pid_rate_yaw,   5, AP_PARAM_FLOAT, "ATC_RAT_YAW_IMAX" },
+        {Parameters::k_param_pid_rate_roll, 5, AP_PARAM_FLOAT, "ATC_RAT_RLL_IMAX"},
+        {Parameters::k_param_pid_rate_pitch, 5, AP_PARAM_FLOAT, "ATC_RAT_PIT_IMAX"},
+        {Parameters::k_param_pid_rate_yaw, 5, AP_PARAM_FLOAT, "ATC_RAT_YAW_IMAX"},
 #if FRAME_CONFIG == HELI_FRAME
-        { Parameters::k_param_pid_rate_roll,  7, AP_PARAM_FLOAT, "ATC_RAT_RLL_ILMI" },
-        { Parameters::k_param_pid_rate_pitch, 7, AP_PARAM_FLOAT, "ATC_RAT_PIT_ILMI" },
-        { Parameters::k_param_pid_rate_yaw,   7, AP_PARAM_FLOAT, "ATC_RAT_YAW_ILMI" },
+        {Parameters::k_param_pid_rate_roll, 7, AP_PARAM_FLOAT, "ATC_RAT_RLL_ILMI"},
+        {Parameters::k_param_pid_rate_pitch, 7, AP_PARAM_FLOAT, "ATC_RAT_PIT_ILMI"},
+        {Parameters::k_param_pid_rate_yaw, 7, AP_PARAM_FLOAT, "ATC_RAT_YAW_ILMI"},
 #endif
     };
     // conversion from Copter-3.3 to Copter-3.4
     const AP_Param::ConversionInfo angle_and_filt_conversion_info[] = {
-        { Parameters::k_param_p_stabilize_roll, 0, AP_PARAM_FLOAT, "ATC_ANG_RLL_P" },
-        { Parameters::k_param_p_stabilize_pitch, 0, AP_PARAM_FLOAT, "ATC_ANG_PIT_P" },
-        { Parameters::k_param_p_stabilize_yaw, 0, AP_PARAM_FLOAT, "ATC_ANG_YAW_P" },
-        { Parameters::k_param_pid_rate_roll, 6, AP_PARAM_FLOAT, "ATC_RAT_RLL_FILT" },
-        { Parameters::k_param_pid_rate_pitch, 6, AP_PARAM_FLOAT, "ATC_RAT_PIT_FILT" },
-        { Parameters::k_param_pid_rate_yaw, 6, AP_PARAM_FLOAT, "ATC_RAT_YAW_FILT" },
-        { Parameters::k_param_pi_vel_xy, 0, AP_PARAM_FLOAT, "PSC_VELXY_P" },
-        { Parameters::k_param_pi_vel_xy, 1, AP_PARAM_FLOAT, "PSC_VELXY_I" },
-        { Parameters::k_param_pi_vel_xy, 2, AP_PARAM_FLOAT, "PSC_VELXY_IMAX" },
-        { Parameters::k_param_pi_vel_xy, 3, AP_PARAM_FLOAT, "PSC_VELXY_FILT" },
-        { Parameters::k_param_p_vel_z, 0, AP_PARAM_FLOAT, "PSC_VELZ_P" },
-        { Parameters::k_param_pid_accel_z, 0, AP_PARAM_FLOAT, "PSC_ACCZ_P" },
-        { Parameters::k_param_pid_accel_z, 1, AP_PARAM_FLOAT, "PSC_ACCZ_I" },
-        { Parameters::k_param_pid_accel_z, 2, AP_PARAM_FLOAT, "PSC_ACCZ_D" },
-        { Parameters::k_param_pid_accel_z, 5, AP_PARAM_FLOAT, "PSC_ACCZ_IMAX" },
-        { Parameters::k_param_pid_accel_z, 6, AP_PARAM_FLOAT, "PSC_ACCZ_FLTE" },
-        { Parameters::k_param_p_alt_hold, 0, AP_PARAM_FLOAT, "PSC_POSZ_P" },
-        { Parameters::k_param_p_pos_xy, 0, AP_PARAM_FLOAT, "PSC_POSXY_P" },
+        {Parameters::k_param_p_stabilize_roll, 0, AP_PARAM_FLOAT, "ATC_ANG_RLL_P"},
+        {Parameters::k_param_p_stabilize_pitch, 0, AP_PARAM_FLOAT, "ATC_ANG_PIT_P"},
+        {Parameters::k_param_p_stabilize_yaw, 0, AP_PARAM_FLOAT, "ATC_ANG_YAW_P"},
+        {Parameters::k_param_pid_rate_roll, 6, AP_PARAM_FLOAT, "ATC_RAT_RLL_FILT"},
+        {Parameters::k_param_pid_rate_pitch, 6, AP_PARAM_FLOAT, "ATC_RAT_PIT_FILT"},
+        {Parameters::k_param_pid_rate_yaw, 6, AP_PARAM_FLOAT, "ATC_RAT_YAW_FILT"},
+        {Parameters::k_param_pi_vel_xy, 0, AP_PARAM_FLOAT, "PSC_VELXY_P"},
+        {Parameters::k_param_pi_vel_xy, 1, AP_PARAM_FLOAT, "PSC_VELXY_I"},
+        {Parameters::k_param_pi_vel_xy, 2, AP_PARAM_FLOAT, "PSC_VELXY_IMAX"},
+        {Parameters::k_param_pi_vel_xy, 3, AP_PARAM_FLOAT, "PSC_VELXY_FILT"},
+        {Parameters::k_param_p_vel_z, 0, AP_PARAM_FLOAT, "PSC_VELZ_P"},
+        {Parameters::k_param_pid_accel_z, 0, AP_PARAM_FLOAT, "PSC_ACCZ_P"},
+        {Parameters::k_param_pid_accel_z, 1, AP_PARAM_FLOAT, "PSC_ACCZ_I"},
+        {Parameters::k_param_pid_accel_z, 2, AP_PARAM_FLOAT, "PSC_ACCZ_D"},
+        {Parameters::k_param_pid_accel_z, 5, AP_PARAM_FLOAT, "PSC_ACCZ_IMAX"},
+        {Parameters::k_param_pid_accel_z, 6, AP_PARAM_FLOAT, "PSC_ACCZ_FLTE"},
+        {Parameters::k_param_p_alt_hold, 0, AP_PARAM_FLOAT, "PSC_POSZ_P"},
+        {Parameters::k_param_p_pos_xy, 0, AP_PARAM_FLOAT, "PSC_POSXY_P"},
     };
     const AP_Param::ConversionInfo throttle_conversion_info[] = {
-        { Parameters::k_param_throttle_min, 0, AP_PARAM_FLOAT, "MOT_SPIN_MIN" },
-        { Parameters::k_param_throttle_mid, 0, AP_PARAM_FLOAT, "MOT_THST_HOVER" }
-    };
+        {Parameters::k_param_throttle_min, 0, AP_PARAM_FLOAT, "MOT_SPIN_MIN"},
+        {Parameters::k_param_throttle_mid, 0, AP_PARAM_FLOAT, "MOT_THST_HOVER"}};
     const AP_Param::ConversionInfo loiter_conversion_info[] = {
-        { Parameters::k_param_wp_nav, 4, AP_PARAM_FLOAT, "LOIT_SPEED" },
-        { Parameters::k_param_wp_nav, 7, AP_PARAM_FLOAT, "LOIT_BRK_JERK" },
-        { Parameters::k_param_wp_nav, 8, AP_PARAM_FLOAT, "LOIT_ACC_MAX" },
-        { Parameters::k_param_wp_nav, 9, AP_PARAM_FLOAT, "LOIT_BRK_ACCEL" }
-    };
+        {Parameters::k_param_wp_nav, 4, AP_PARAM_FLOAT, "LOIT_SPEED"},
+        {Parameters::k_param_wp_nav, 7, AP_PARAM_FLOAT, "LOIT_BRK_JERK"},
+        {Parameters::k_param_wp_nav, 8, AP_PARAM_FLOAT, "LOIT_ACC_MAX"},
+        {Parameters::k_param_wp_nav, 9, AP_PARAM_FLOAT, "LOIT_BRK_ACCEL"}};
 
     // gains increase by 27% due to attitude controller's switch to use radians instead of centi-degrees
     // and motor libraries switch to accept inputs in -1 to +1 range instead of -4500 ~ +4500
@@ -1246,54 +1296,61 @@ void Copter::convert_pid_parameters(void)
 
 #if FRAME_CONFIG != HELI_FRAME
     // Multicopter x-frame gains are 40% lower because -1 or +1 input to motors now results in maximum rotation
-    if (g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_X || g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_V || g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_H) {
+    if (g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_X || g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_V || g.frame_type == AP_Motors::MOTOR_FRAME_TYPE_H)
+    {
         pid_scaler = 0.9f;
     }
 #endif
 
     // scale PID gains
-    for (const auto &info : pid_conversion_info) {
+    for (const auto &info : pid_conversion_info)
+    {
         AP_Param::convert_old_parameter(&info, pid_scaler);
     }
     // reduce IMAX into -1 ~ +1 range
-    for (const auto &info : imax_conversion_info) {
-        AP_Param::convert_old_parameter(&info, 1.0f/4500.0f);
+    for (const auto &info : imax_conversion_info)
+    {
+        AP_Param::convert_old_parameter(&info, 1.0f / 4500.0f);
     }
     // convert angle controller gain and filter without scaling
-    for (const auto &info : angle_and_filt_conversion_info) {
+    for (const auto &info : angle_and_filt_conversion_info)
+    {
         AP_Param::convert_old_parameter(&info, 1.0f);
     }
     // convert throttle parameters (multicopter only)
-    for (const auto &info : throttle_conversion_info) {
+    for (const auto &info : throttle_conversion_info)
+    {
         AP_Param::convert_old_parameter(&info, 0.001f);
     }
     // convert RC_FEEL_RP to ATC_INPUT_TC
-    const AP_Param::ConversionInfo rc_feel_rp_conversion_info = { Parameters::k_param_rc_feel_rp, 0, AP_PARAM_INT8, "ATC_INPUT_TC" };
+    const AP_Param::ConversionInfo rc_feel_rp_conversion_info = {Parameters::k_param_rc_feel_rp, 0, AP_PARAM_INT8, "ATC_INPUT_TC"};
     AP_Int8 rc_feel_rp_old;
-    if (AP_Param::find_old_parameter(&rc_feel_rp_conversion_info, &rc_feel_rp_old)) {
+    if (AP_Param::find_old_parameter(&rc_feel_rp_conversion_info, &rc_feel_rp_old))
+    {
         AP_Param::set_default_by_name(rc_feel_rp_conversion_info.new_name, (1.0f / (2.0f + rc_feel_rp_old.get() * 0.1f)));
     }
     // convert loiter parameters
-    for (const auto &info : loiter_conversion_info) {
+    for (const auto &info : loiter_conversion_info)
+    {
         AP_Param::convert_old_parameter(&info, 1.0f);
     }
 
     // TradHeli default parameters
 #if FRAME_CONFIG == HELI_FRAME
     static const struct AP_Param::defaults_table_struct heli_defaults_table[] = {
-        { "LOIT_ACC_MAX", 500.0f },
-        { "LOIT_BRK_ACCEL", 125.0f },
-        { "LOIT_BRK_DELAY", 1.0f },
-        { "LOIT_BRK_JERK", 250.0f },
-        { "LOIT_SPEED", 3000.0f },
-        { "PHLD_BRAKE_ANGLE", 800.0f },
-        { "PHLD_BRAKE_RATE", 4.0f },
-        { "PSC_ACCZ_P", 0.28f },
-        { "PSC_VELXY_D", 0.0f },
-        { "PSC_VELXY_I", 0.5f },
-        { "PSC_VELXY_P", 1.0f },
-        { "RC8_OPTION", 32 },
-        { "RC_OPTIONS", 0 },
+        {"LOIT_ACC_MAX", 500.0f},
+        {"LOIT_BRK_ACCEL", 125.0f},
+        {"LOIT_BRK_DELAY", 1.0f},
+        {"LOIT_BRK_JERK", 250.0f},
+        {"LOIT_SPEED", 3000.0f},
+        {"PHLD_BRAKE_ANGLE", 800.0f},
+        {"PHLD_BRAKE_RATE", 4.0f},
+        {"PSC_ACCZ_P", 0.28f},
+        {"PSC_VELXY_D", 0.0f},
+        {"PSC_VELXY_I", 0.5f},
+        {"PSC_VELXY_P", 1.0f},
+        {"RC8_OPTION", 32},
+        {"RC_OPTIONS", 0},
     };
     AP_Param::set_defaults_from_table(heli_defaults_table, ARRAY_SIZE(heli_defaults_table));
 #endif
@@ -1303,34 +1360,36 @@ void Copter::convert_pid_parameters(void)
     const AP_Param::ConversionInfo ff_and_filt_conversion_info[] = {
 #if FRAME_CONFIG == HELI_FRAME
         // tradheli moves ATC_RAT_RLL/PIT_FILT to FLTE, ATC_RAT_YAW_FILT to FLTE
-        { Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTE" },
-        { Parameters::k_param_attitude_control, 387, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTE" },
-        { Parameters::k_param_attitude_control, 388, AP_PARAM_FLOAT, "ATC_RAT_YAW_FLTE" },
+        {Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTE"},
+        {Parameters::k_param_attitude_control, 387, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTE"},
+        {Parameters::k_param_attitude_control, 388, AP_PARAM_FLOAT, "ATC_RAT_YAW_FLTE"},
 #else
         // multicopters move ATC_RAT_RLL/PIT_FILT to FLTD & FLTT, ATC_RAT_YAW_FILT to FLTE
-        { Parameters::k_param_attitude_control, 385, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTD" },
-        { Parameters::k_param_attitude_control, 385, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTT" },
-        { Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTD" },
-        { Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTT" },
-        { Parameters::k_param_attitude_control, 387, AP_PARAM_FLOAT, "ATC_RAT_YAW_FLTE" },
-        { Parameters::k_param_attitude_control, 449, AP_PARAM_FLOAT, "ATC_RAT_RLL_FF" },
-        { Parameters::k_param_attitude_control, 450, AP_PARAM_FLOAT, "ATC_RAT_PIT_FF" },
-        { Parameters::k_param_attitude_control, 451, AP_PARAM_FLOAT, "ATC_RAT_YAW_FF" },
+        {Parameters::k_param_attitude_control, 385, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTD"},
+        {Parameters::k_param_attitude_control, 385, AP_PARAM_FLOAT, "ATC_RAT_RLL_FLTT"},
+        {Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTD"},
+        {Parameters::k_param_attitude_control, 386, AP_PARAM_FLOAT, "ATC_RAT_PIT_FLTT"},
+        {Parameters::k_param_attitude_control, 387, AP_PARAM_FLOAT, "ATC_RAT_YAW_FLTE"},
+        {Parameters::k_param_attitude_control, 449, AP_PARAM_FLOAT, "ATC_RAT_RLL_FF"},
+        {Parameters::k_param_attitude_control, 450, AP_PARAM_FLOAT, "ATC_RAT_PIT_FF"},
+        {Parameters::k_param_attitude_control, 451, AP_PARAM_FLOAT, "ATC_RAT_YAW_FF"},
 #endif
-        { Parameters::k_param_pos_control, 388, AP_PARAM_FLOAT, "PSC_ACCZ_FLTE" },
+        {Parameters::k_param_pos_control, 388, AP_PARAM_FLOAT, "PSC_ACCZ_FLTE"},
     };
     uint8_t filt_table_size = ARRAY_SIZE(ff_and_filt_conversion_info);
-    for (uint8_t i=0; i<filt_table_size; i++) {
+    for (uint8_t i = 0; i < filt_table_size; i++)
+    {
         AP_Param::convert_old_parameters(&ff_and_filt_conversion_info[i], 1.0f);
     }
 
     // notch filter parameter conversions (changed position and type) for Copter-3.7
     const AP_Param::ConversionInfo notchfilt_conversion_info[] = {
-        { Parameters::k_param_ins, 165, AP_PARAM_INT16, "INS_NOTCH_FREQ" },
-        { Parameters::k_param_ins, 229, AP_PARAM_INT16, "INS_NOTCH_BW" },
+        {Parameters::k_param_ins, 165, AP_PARAM_INT16, "INS_NOTCH_FREQ"},
+        {Parameters::k_param_ins, 229, AP_PARAM_INT16, "INS_NOTCH_BW"},
     };
     uint8_t notchfilt_table_size = ARRAY_SIZE(notchfilt_conversion_info);
-    for (uint8_t i=0; i<notchfilt_table_size; i++) {
+    for (uint8_t i = 0; i < notchfilt_table_size; i++)
+    {
         AP_Param::convert_old_parameters(&notchfilt_conversion_info[i], 1.0f);
     }
 
@@ -1346,7 +1405,8 @@ void Copter::convert_lgr_parameters(void)
 {
     // convert landing gear PWM values
     uint8_t chan;
-    if (!SRV_Channels::find_channel(SRV_Channel::k_landing_gear_control, chan)) {
+    if (!SRV_Channels::find_channel(SRV_Channel::k_landing_gear_control, chan))
+    {
         return;
     }
     // parameter names are 1 based
@@ -1370,50 +1430,60 @@ void Copter::convert_lgr_parameters(void)
     snprintf(pname, sizeof(pname), "SERVO%u_REVERSED", chan & 0x3F); // Only use the 6 LSBs, avoids a cpp warning
     servo_reversed = (AP_Int16 *)AP_Param::find(pname, &ptype);
 
-    if (!servo_min || !servo_max || !servo_trim || !servo_reversed) {
+    if (!servo_min || !servo_max || !servo_trim || !servo_reversed)
+    {
         // this shouldn't happen
         return;
     }
     if (servo_min->configured_in_storage() ||
         servo_max->configured_in_storage() ||
         servo_trim->configured_in_storage() ||
-        servo_reversed->configured_in_storage()) {
+        servo_reversed->configured_in_storage())
+    {
         // has been previously saved, don't upgrade
         return;
     }
 
     // get the old PWM values
     AP_Int16 old_pwm;
-    uint16_t old_retract=0, old_deploy=0;
-    const AP_Param::ConversionInfo cinfo_ret { Parameters::k_param_landinggear, 0, AP_PARAM_INT16, nullptr };
-    const AP_Param::ConversionInfo cinfo_dep { Parameters::k_param_landinggear, 1, AP_PARAM_INT16, nullptr };
-    if (AP_Param::find_old_parameter(&cinfo_ret, &old_pwm)) {
+    uint16_t old_retract = 0, old_deploy = 0;
+    const AP_Param::ConversionInfo cinfo_ret{Parameters::k_param_landinggear, 0, AP_PARAM_INT16, nullptr};
+    const AP_Param::ConversionInfo cinfo_dep{Parameters::k_param_landinggear, 1, AP_PARAM_INT16, nullptr};
+    if (AP_Param::find_old_parameter(&cinfo_ret, &old_pwm))
+    {
         old_retract = (uint16_t)old_pwm.get();
     }
-    if (AP_Param::find_old_parameter(&cinfo_dep, &old_pwm)) {
+    if (AP_Param::find_old_parameter(&cinfo_dep, &old_pwm))
+    {
         old_deploy = (uint16_t)old_pwm.get();
     }
 
-    if (old_retract == 0 && old_deploy == 0) {
+    if (old_retract == 0 && old_deploy == 0)
+    {
         // old parameters were never set
         return;
     }
 
     // use old defaults
-    if (old_retract == 0) {
+    if (old_retract == 0)
+    {
         old_retract = 1250;
     }
-    if (old_deploy == 0) {
+    if (old_deploy == 0)
+    {
         old_deploy = 1750;
     }
 
     // set and save correct values on the servo
-    if (old_retract <= old_deploy) {
+    if (old_retract <= old_deploy)
+    {
         servo_max->set_and_save(old_deploy);
         servo_min->set_and_save(old_retract);
         servo_trim->set_and_save(old_retract);
         servo_reversed->set_and_save_ifchanged(0);
-    } else {
+    }
+    else
+    {
         servo_max->set_and_save(old_retract);
         servo_min->set_and_save(old_deploy);
         servo_trim->set_and_save(old_deploy);
@@ -1426,77 +1496,87 @@ void Copter::convert_lgr_parameters(void)
 // handle conversion of tradheli parameters from Copter-3.6 to Copter-3.7
 void Copter::convert_tradheli_parameters(void) const
 {
-    if (g2.frame_class.get() == AP_Motors::MOTOR_FRAME_HELI) {
+    if (g2.frame_class.get() == AP_Motors::MOTOR_FRAME_HELI)
+    {
         // single heli conversion info
         const AP_Param::ConversionInfo singleheli_conversion_info[] = {
-            { Parameters::k_param_motors, 1, AP_PARAM_INT16, "H_SW_H3_SV1_POS" },
-            { Parameters::k_param_motors, 2, AP_PARAM_INT16, "H_SW_H3_SV2_POS" },
-            { Parameters::k_param_motors, 3, AP_PARAM_INT16, "H_SW_H3_SV3_POS" },
-            { Parameters::k_param_motors, 7, AP_PARAM_INT16, "H_SW_H3_PHANG" },
-            { Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW_COL_DIR" },
+            {Parameters::k_param_motors, 1, AP_PARAM_INT16, "H_SW_H3_SV1_POS"},
+            {Parameters::k_param_motors, 2, AP_PARAM_INT16, "H_SW_H3_SV2_POS"},
+            {Parameters::k_param_motors, 3, AP_PARAM_INT16, "H_SW_H3_SV3_POS"},
+            {Parameters::k_param_motors, 7, AP_PARAM_INT16, "H_SW_H3_PHANG"},
+            {Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW_COL_DIR"},
         };
 
         // convert single heli parameters without scaling
         uint8_t table_size = ARRAY_SIZE(singleheli_conversion_info);
-        for (uint8_t i=0; i<table_size; i++) {
+        for (uint8_t i = 0; i < table_size; i++)
+        {
             AP_Param::convert_old_parameter(&singleheli_conversion_info[i], 1.0f);
         }
 
         // convert to known swash type for setups that match
-        AP_Int16 swash_pos_1, swash_pos_2, swash_pos_3, swash_phang; 
-        AP_Int8  swash_type;
+        AP_Int16 swash_pos_1, swash_pos_2, swash_pos_3, swash_phang;
+        AP_Int8 swash_type;
         bool swash_pos1_exist = AP_Param::find_old_parameter(&singleheli_conversion_info[0], &swash_pos_1);
         bool swash_pos2_exist = AP_Param::find_old_parameter(&singleheli_conversion_info[1], &swash_pos_2);
         bool swash_pos3_exist = AP_Param::find_old_parameter(&singleheli_conversion_info[2], &swash_pos_3);
         bool swash_phang_exist = AP_Param::find_old_parameter(&singleheli_conversion_info[3], &swash_phang);
-        const AP_Param::ConversionInfo swash_type_info { Parameters::k_param_motors, 5, AP_PARAM_INT8, "H_SW_TYPE" };
+        const AP_Param::ConversionInfo swash_type_info{Parameters::k_param_motors, 5, AP_PARAM_INT8, "H_SW_TYPE"};
         bool swash_type_exists = AP_Param::find_old_parameter(&swash_type_info, &swash_type);
 
-        if (swash_type_exists) {
+        if (swash_type_exists)
+        {
             // convert swash type to new parameter
             AP_Param::convert_old_parameter(&swash_type_info, 1.0f);
-        } else {
-        // old swash type is not in eeprom and thus type is default value of generic swash
-            if (swash_pos1_exist || swash_pos2_exist || swash_pos3_exist || swash_phang_exist) {
+        }
+        else
+        {
+            // old swash type is not in eeprom and thus type is default value of generic swash
+            if (swash_pos1_exist || swash_pos2_exist || swash_pos3_exist || swash_phang_exist)
+            {
                 // if any params exist with the generic swash then the upgraded swash type must be generic
                 // find the new variable in the variable structures
                 enum ap_var_type ptype;
                 AP_Param *ap2;
                 ap2 = AP_Param::find("H_SW_TYPE", &ptype);
                 // make sure the pointer is valid
-                if (ap2 != nullptr) {
+                if (ap2 != nullptr)
+                {
                     // see if we can load it from EEPROM
-                    if (!ap2->configured_in_storage()) {
+                    if (!ap2->configured_in_storage())
+                    {
                         // the new parameter is not in storage so set generic swash
-                        AP_Param::set_and_save_by_name("H_SW_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);            
+                        AP_Param::set_and_save_by_name("H_SW_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);
                     }
                 }
             }
         }
-    } else if (g2.frame_class.get() == AP_Motors::MOTOR_FRAME_HELI_DUAL) {
+    }
+    else if (g2.frame_class.get() == AP_Motors::MOTOR_FRAME_HELI_DUAL)
+    {
         // dual heli conversion info
         const AP_Param::ConversionInfo dualheli_conversion_info[] = {
-            { Parameters::k_param_motors, 1, AP_PARAM_INT16, "H_SW_H3_SV1_POS" },
-            { Parameters::k_param_motors, 2, AP_PARAM_INT16, "H_SW_H3_SV2_POS" },
-            { Parameters::k_param_motors, 3, AP_PARAM_INT16, "H_SW_H3_SV3_POS" },
-            { Parameters::k_param_motors, 4, AP_PARAM_INT16, "H_SW2_H3_SV1_POS" },
-            { Parameters::k_param_motors, 5, AP_PARAM_INT16, "H_SW2_H3_SV2_POS" },
-            { Parameters::k_param_motors, 6, AP_PARAM_INT16, "H_SW2_H3_SV3_POS" },
-            { Parameters::k_param_motors, 7, AP_PARAM_INT16, "H_SW_H3_PHANG" },
-            { Parameters::k_param_motors, 8, AP_PARAM_INT16, "H_SW2_H3_PHANG" },
-            { Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW_COL_DIR" },
-            { Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW2_COL_DIR" },
+            {Parameters::k_param_motors, 1, AP_PARAM_INT16, "H_SW_H3_SV1_POS"},
+            {Parameters::k_param_motors, 2, AP_PARAM_INT16, "H_SW_H3_SV2_POS"},
+            {Parameters::k_param_motors, 3, AP_PARAM_INT16, "H_SW_H3_SV3_POS"},
+            {Parameters::k_param_motors, 4, AP_PARAM_INT16, "H_SW2_H3_SV1_POS"},
+            {Parameters::k_param_motors, 5, AP_PARAM_INT16, "H_SW2_H3_SV2_POS"},
+            {Parameters::k_param_motors, 6, AP_PARAM_INT16, "H_SW2_H3_SV3_POS"},
+            {Parameters::k_param_motors, 7, AP_PARAM_INT16, "H_SW_H3_PHANG"},
+            {Parameters::k_param_motors, 8, AP_PARAM_INT16, "H_SW2_H3_PHANG"},
+            {Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW_COL_DIR"},
+            {Parameters::k_param_motors, 19, AP_PARAM_INT8, "H_SW2_COL_DIR"},
         };
 
         // convert dual heli parameters without scaling
         uint8_t table_size = ARRAY_SIZE(dualheli_conversion_info);
-        for (uint8_t i=0; i<table_size; i++) {
+        for (uint8_t i = 0; i < table_size; i++)
+        {
             AP_Param::convert_old_parameter(&dualheli_conversion_info[i], 1.0f);
         }
 
-
         // convert to known swash type for setups that match
-        AP_Int16 swash1_pos_1, swash1_pos_2, swash1_pos_3, swash1_phang, swash2_pos_1, swash2_pos_2, swash2_pos_3, swash2_phang; 
+        AP_Int16 swash1_pos_1, swash1_pos_2, swash1_pos_3, swash1_phang, swash2_pos_1, swash2_pos_2, swash2_pos_3, swash2_phang;
         bool swash1_pos1_exist = AP_Param::find_old_parameter(&dualheli_conversion_info[0], &swash1_pos_1);
         bool swash1_pos2_exist = AP_Param::find_old_parameter(&dualheli_conversion_info[1], &swash1_pos_2);
         bool swash1_pos3_exist = AP_Param::find_old_parameter(&dualheli_conversion_info[2], &swash1_pos_3);
@@ -1508,35 +1588,41 @@ void Copter::convert_tradheli_parameters(void) const
 
         // SWASH 1
         // old swash type is not in eeprom and thus type is default value of generic swash
-        if (swash1_pos1_exist || swash1_pos2_exist || swash1_pos3_exist || swash1_phang_exist) {
+        if (swash1_pos1_exist || swash1_pos2_exist || swash1_pos3_exist || swash1_phang_exist)
+        {
             // if any params exist with the generic swash then the upgraded swash type must be generic
             // find the new variable in the variable structures
             enum ap_var_type ptype;
             AP_Param *ap2;
             ap2 = AP_Param::find("H_SW_TYPE", &ptype);
             // make sure the pointer is valid
-            if (ap2 != nullptr) {
+            if (ap2 != nullptr)
+            {
                 // see if we can load it from EEPROM
-                if (!ap2->configured_in_storage()) {
+                if (!ap2->configured_in_storage())
+                {
                     // the new parameter is not in storage so set generic swash
-                    AP_Param::set_and_save_by_name("H_SW_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);            
+                    AP_Param::set_and_save_by_name("H_SW_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);
                 }
             }
         }
         //SWASH 2
         // old swash type is not in eeprom and thus type is default value of generic swash
-        if (swash2_pos1_exist || swash2_pos2_exist || swash2_pos3_exist || swash2_phang_exist) {
+        if (swash2_pos1_exist || swash2_pos2_exist || swash2_pos3_exist || swash2_phang_exist)
+        {
             // if any params exist with the generic swash then the upgraded swash type must be generic
             // find the new variable in the variable structures
             enum ap_var_type ptype;
             AP_Param *ap2;
             ap2 = AP_Param::find("H_SW2_TYPE", &ptype);
             // make sure the pointer is valid
-            if (ap2 != nullptr) {
+            if (ap2 != nullptr)
+            {
                 // see if we can load it from EEPROM
-                if (!ap2->configured_in_storage()) {
+                if (!ap2->configured_in_storage())
+                {
                     // the new parameter is not in storage so set generic swash
-                    AP_Param::set_and_save_by_name("H_SW2_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);            
+                    AP_Param::set_and_save_by_name("H_SW2_TYPE", SwashPlateType::SWASHPLATE_TYPE_H3);
                 }
             }
         }
@@ -1544,31 +1630,33 @@ void Copter::convert_tradheli_parameters(void) const
 
     // table of rsc parameters to be converted with scaling
     const AP_Param::ConversionInfo rschelipct_conversion_info[] = {
-        { Parameters::k_param_motors, 1280, AP_PARAM_INT16, "H_RSC_THRCRV_0" },
-        { Parameters::k_param_motors, 1344, AP_PARAM_INT16, "H_RSC_THRCRV_25" },
-        { Parameters::k_param_motors, 1408, AP_PARAM_INT16, "H_RSC_THRCRV_50" },
-        { Parameters::k_param_motors, 1472, AP_PARAM_INT16, "H_RSC_THRCRV_75" },
-        { Parameters::k_param_motors, 1536, AP_PARAM_INT16, "H_RSC_THRCRV_100" },
-        { Parameters::k_param_motors, 448, AP_PARAM_INT16, "H_RSC_SETPOINT" },
-        { Parameters::k_param_motors, 768, AP_PARAM_INT16, "H_RSC_CRITICAL" },
-        { Parameters::k_param_motors, 832, AP_PARAM_INT16, "H_RSC_IDLE" },
+        {Parameters::k_param_motors, 1280, AP_PARAM_INT16, "H_RSC_THRCRV_0"},
+        {Parameters::k_param_motors, 1344, AP_PARAM_INT16, "H_RSC_THRCRV_25"},
+        {Parameters::k_param_motors, 1408, AP_PARAM_INT16, "H_RSC_THRCRV_50"},
+        {Parameters::k_param_motors, 1472, AP_PARAM_INT16, "H_RSC_THRCRV_75"},
+        {Parameters::k_param_motors, 1536, AP_PARAM_INT16, "H_RSC_THRCRV_100"},
+        {Parameters::k_param_motors, 448, AP_PARAM_INT16, "H_RSC_SETPOINT"},
+        {Parameters::k_param_motors, 768, AP_PARAM_INT16, "H_RSC_CRITICAL"},
+        {Parameters::k_param_motors, 832, AP_PARAM_INT16, "H_RSC_IDLE"},
     };
     // convert heli rsc parameters with scaling
     uint8_t table_size = ARRAY_SIZE(rschelipct_conversion_info);
-    for (uint8_t i=0; i<table_size; i++) {
+    for (uint8_t i = 0; i < table_size; i++)
+    {
         AP_Param::convert_old_parameter(&rschelipct_conversion_info[i], 0.1f);
     }
 
     // table of rsc parameters to be converted without scaling
     const AP_Param::ConversionInfo rscheli_conversion_info[] = {
-        { Parameters::k_param_motors, 512, AP_PARAM_INT8,  "H_RSC_MODE" },
-        { Parameters::k_param_motors, 640, AP_PARAM_INT8,  "H_RSC_RAMP_TIME" },
-        { Parameters::k_param_motors, 704, AP_PARAM_INT8,  "H_RSC_RUNUP_TIME" },
-        { Parameters::k_param_motors, 1216, AP_PARAM_INT16,"H_RSC_SLEWRATE" },
+        {Parameters::k_param_motors, 512, AP_PARAM_INT8, "H_RSC_MODE"},
+        {Parameters::k_param_motors, 640, AP_PARAM_INT8, "H_RSC_RAMP_TIME"},
+        {Parameters::k_param_motors, 704, AP_PARAM_INT8, "H_RSC_RUNUP_TIME"},
+        {Parameters::k_param_motors, 1216, AP_PARAM_INT16, "H_RSC_SLEWRATE"},
     };
     // convert heli rsc parameters without scaling
     table_size = ARRAY_SIZE(rscheli_conversion_info);
-    for (uint8_t i=0; i<table_size; i++) {
+    for (uint8_t i = 0; i < table_size; i++)
+    {
         AP_Param::convert_old_parameter(&rscheli_conversion_info[i], 1.0f);
     }
 
@@ -1576,25 +1664,26 @@ void Copter::convert_tradheli_parameters(void) const
     AP_Int16 *tailspeed;
     enum ap_var_type ptype;
     tailspeed = (AP_Int16 *)AP_Param::find("H_TAIL_SPEED", &ptype);
-    if (tailspeed != nullptr && tailspeed->get() > 100 ) {
+    if (tailspeed != nullptr && tailspeed->get() > 100)
+    {
         uint16_t tailspeed_pct = (uint16_t)(0.1f * tailspeed->get());
-        AP_Param::set_and_save_by_name("H_TAIL_SPEED", tailspeed_pct );
+        AP_Param::set_and_save_by_name("H_TAIL_SPEED", tailspeed_pct);
     }
 
     // table of stabilize collective parameters to be converted with scaling
     const AP_Param::ConversionInfo collhelipct_conversion_info[] = {
-        { Parameters::k_param_input_manager, 1, AP_PARAM_INT16,  "IM_STB_COL_1" },
-        { Parameters::k_param_input_manager, 2, AP_PARAM_INT16,  "IM_STB_COL_2" },
-        { Parameters::k_param_input_manager, 3, AP_PARAM_INT16,  "IM_STB_COL_3" },
-        { Parameters::k_param_input_manager, 4, AP_PARAM_INT16,  "IM_STB_COL_4" },
+        {Parameters::k_param_input_manager, 1, AP_PARAM_INT16, "IM_STB_COL_1"},
+        {Parameters::k_param_input_manager, 2, AP_PARAM_INT16, "IM_STB_COL_2"},
+        {Parameters::k_param_input_manager, 3, AP_PARAM_INT16, "IM_STB_COL_3"},
+        {Parameters::k_param_input_manager, 4, AP_PARAM_INT16, "IM_STB_COL_4"},
     };
 
     // convert stabilize collective parameters with scaling
     table_size = ARRAY_SIZE(collhelipct_conversion_info);
-    for (uint8_t i=0; i<table_size; i++) {
+    for (uint8_t i = 0; i < table_size; i++)
+    {
         AP_Param::convert_old_parameter(&collhelipct_conversion_info[i], 0.1f);
     }
-
 }
 #endif
 
@@ -1604,7 +1693,8 @@ void Copter::convert_fs_options_params(void) const
     enum ap_var_type ptype;
     AP_Int32 *fs_opt = (AP_Int32 *)AP_Param::find("FS_OPTIONS", &ptype);
 
-    if (fs_opt == nullptr || fs_opt->configured_in_storage() || ptype != AP_PARAM_INT32) {
+    if (fs_opt == nullptr || fs_opt->configured_in_storage() || ptype != AP_PARAM_INT32)
+    {
         return;
     }
 
@@ -1612,13 +1702,15 @@ void Copter::convert_fs_options_params(void) const
     int32_t fs_options_converted = (int32_t)FailsafeOption::GCS_CONTINUE_IF_PILOT_CONTROL;
 
     // If FS_THR_ENABLED is 2 (continue mission), change to RTL and add continue mission to the new FS_OPTIONS parameter
-    if (g.failsafe_throttle == FS_THR_ENABLED_CONTINUE_MISSION) {
+    if (g.failsafe_throttle == FS_THR_ENABLED_CONTINUE_MISSION)
+    {
         fs_options_converted |= int32_t(FailsafeOption::RC_CONTINUE_IF_AUTO);
         AP_Param::set_and_save_by_name("FS_THR_ENABLE", FS_THR_ENABLED_ALWAYS_RTL);
     }
 
     // If FS_GCS_ENABLED is 2 (continue mission), change to RTL and add continue mission to the new FS_OPTIONS parameter
-    if (g.failsafe_gcs == FS_GCS_ENABLED_CONTINUE_MISSION) {
+    if (g.failsafe_gcs == FS_GCS_ENABLED_CONTINUE_MISSION)
+    {
         fs_options_converted |= int32_t(FailsafeOption::GCS_CONTINUE_IF_AUTO);
         AP_Param::set_and_save_by_name("FS_GCS_ENABLE", FS_GCS_ENABLED_ALWAYS_RTL);
     }
