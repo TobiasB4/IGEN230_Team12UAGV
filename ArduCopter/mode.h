@@ -1298,8 +1298,8 @@ public:
 private: 
 
      float _desired_lat_accel;   // desired lateral acceleration calculated from pilot steering input
-     const int throttleout = 0; 
-     const int steering out =1;
+     const int ThrottleOut = 0; 
+     const int SteeringOut = 1;
 };
 
 #if FRAME_CONFIG == HELI_FRAME
