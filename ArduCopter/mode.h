@@ -36,6 +36,7 @@ public:
         ZIGZAG    =    24,  // ZIGZAG mode is able to fly in a zigzag manner with predefined point A and point B
         SYSTEMID  =    25,  // System ID mode produces automated system identification signals in the controllers
         AUTOROTATE =   26,  // Autonomous autorotation
+        DRIVE =        27,  // Drive mode
     };
 
     // constructor
@@ -1267,6 +1268,38 @@ protected:
 
 private:
 
+};
+
+class ModeDrive : public Mode {
+
+public:
+
+	const char *name() const override { return "DRIVEMODE"; }
+	const char *name4() const override { return "DRIV"; }
+    float signal_output [] {0,0}
+
+	// methods that affect movement of the vehicle in this mode
+	void update() override;
+    void get_pilot_input() override;
+
+	// attributes for mavlink system status reporting
+	bool has_manual_input() const override { return true; }
+	bool attitude_stabilized() const override { return false; }
+
+	// steering requires velocity but not position
+	bool requires_position() const override { return false; }
+	bool requires_velocity() const override { return true; }
+
+    // return desired lateral acceleration
+    float get_desired_lat_accel() const override { return _desired_lat_accel; }
+    
+    void _exit() override;
+    
+private: 
+
+     float _desired_lat_accel;   // desired lateral acceleration calculated from pilot steering input
+     const int throttleout = 0; 
+     const int steering out =1;
 };
 
 #if FRAME_CONFIG == HELI_FRAME
