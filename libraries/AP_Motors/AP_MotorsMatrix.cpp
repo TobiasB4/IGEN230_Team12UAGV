@@ -606,9 +606,13 @@ void AP_MotorsMatrix::add_motor_raw(int8_t motor_num, float roll_fac, float pitc
     {
 
         // increment number of motors if this motor is being newly motor_enabled
-        if (!motor_enabled[motor_num])
+        if (!motor_enabled[motor_num] && motor_num != 4 && motor_num != 5)
         {
             motor_enabled[motor_num] = true;
+        }
+        else
+        {
+            motor_enabled[motor_num] = false;
         }
 
         // set roll, pitch, thottle factors and opposite motor (for stability patch)
