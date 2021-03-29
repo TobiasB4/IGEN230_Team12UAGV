@@ -1293,7 +1293,7 @@ public:
     // return desired lateral acceleration
     float get_desired_lat_accel() const override { return _desired_lat_accel; }
     
-    void _exit() override;
+    void exit() override;
     
 private: 
 
