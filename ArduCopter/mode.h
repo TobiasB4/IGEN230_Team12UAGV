@@ -6,11 +6,12 @@ class ParametersG2;
 
 class GCS_Copter;
 
-class Mode {
+class Mode
+{
 
 public:
-
     // Auto Pilot Modes enumeration
+Class
     enum class Number : uint8_t {
         STABILIZE =     0,  // manual airframe angle with manual throttle
         ACRO =          1,  // manual body-frame angular rate with manual throttle
@@ -44,13 +45,14 @@ public:
 
     // do not allow copying
     Mode(const Mode &other) = delete;
-    Mode &operator=(const Mode&) = delete;
+    Mode &operator=(const Mode &) = delete;
 
     // returns a unique number specific to this mode
     virtual Number mode_number() const = 0;
 
     // child classes should override these methods
-    virtual bool init(bool ignore_checks) {
+    virtual bool init(bool ignore_checks)
+    {
         return true;
     }
     virtual void run() = 0;
@@ -82,7 +84,7 @@ public:
     virtual bool get_wp(Location &loc) { return false; };
     virtual int32_t wp_bearing() const { return 0; }
     virtual uint32_t wp_distance() const { return 0; }
-    virtual float crosstrack_error() const { return 0.0f;}
+    virtual float crosstrack_error() const { return 0.0f; }
 
     int32_t get_alt_above_ground_cm(void);
 
@@ -95,14 +97,14 @@ public:
     // altitude fence
     float get_avoidance_adjusted_climbrate(float target_rate);
 
-    const Vector3f& get_desired_velocity() {
+    const Vector3f &get_desired_velocity()
+    {
         // note that position control isn't used in every mode, so
         // this may return bogus data:
         return pos_control->get_desired_velocity();
     }
 
 protected:
-
     // helper functions
     bool is_disarmed_or_landed() const;
     void zero_throttle_and_relax_ac(bool spool_up = false);
@@ -118,7 +120,8 @@ protected:
     virtual float throttle_hover() const;
 
     // Alt_Hold based flight mode states used in Alt_Hold, Loiter, and Sport
-    enum AltHoldModeState {
+    enum AltHoldModeState
+    {
         AltHold_MotorStopped,
         AltHold_Takeoff,
         AltHold_Landed_Ground_Idle,
@@ -153,15 +156,17 @@ protected:
     // basically waypoint navigation with pilot yaw permitted.
 
     // user-takeoff support; takeoff state is shared across all mode instances
-    class _TakeOff {
+    class _TakeOff
+    {
     public:
         void start(float alt_cm);
         void stop();
-        void get_climb_rates(float& pilot_climb_rate,
-                             float& takeoff_climb_rate);
+        void get_climb_rates(float &pilot_climb_rate,
+                             float &takeoff_climb_rate);
         bool triggered(float target_climb_rate) const;
 
         bool running() const { return _running; }
+
     private:
         bool _running;
         float max_speed;
@@ -184,10 +189,10 @@ protected:
 
 public:
     // Navigation Yaw control
-    class AutoYaw {
+    class AutoYaw
+    {
 
     public:
-
         // yaw(): main product of AutoYaw; the heading:
         float yaw();
 
@@ -210,7 +215,6 @@ public:
                            bool relative_angle);
 
     private:
-
         float look_ahead_yaw();
         float roi_yaw() const;
 
@@ -249,22 +253,24 @@ public:
     // end pass-through functions
 };
 
-
 #if MODE_ACRO_ENABLED == ENABLED
-class ModeAcro : public Mode {
+class ModeAcro : public Mode
+{
 
 public:
     // inherit constructor
     using Mode::Mode;
     Number mode_number() const override { return Number::ACRO; }
 
-    enum class Trainer {
+    enum class Trainer
+    {
         OFF = 0,
         LEVELING = 1,
         LIMITED = 2,
     };
 
-    enum class AcroOptions {
+    enum class AcroOptions
+    {
         AIR_MODE = 1 << 0,
         RATE_LOOP_ONLY = 1 << 1,
     };
@@ -283,7 +289,6 @@ public:
     bool allows_flip() const override { return true; }
 
 protected:
-
     const char *name() const override { return "ACRO"; }
     const char *name4() const override { return "ACRO"; }
 
@@ -297,7 +302,8 @@ private:
 #endif
 
 #if FRAME_CONFIG == HELI_FRAME
-class ModeAcro_Heli : public ModeAcro {
+class ModeAcro_Heli : public ModeAcro
+{
 
 public:
     // inherit constructor
@@ -305,15 +311,15 @@ public:
 
     bool init(bool ignore_checks) override;
     void run() override;
-    void virtual_flybar( float &roll_out, float &pitch_out, float &yaw_out, float pitch_leak, float roll_leak);
+    void virtual_flybar(float &roll_out, float &pitch_out, float &yaw_out, float pitch_leak, float roll_leak);
 
 protected:
 private:
 };
 #endif
 
-
-class ModeAltHold : public Mode {
+class ModeAltHold : public Mode
+{
 
 public:
     // inherit constructor
@@ -327,23 +333,22 @@ public:
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(bool from_gcs) const override { return true; };
     bool is_autopilot() const override { return false; }
-    bool has_user_takeoff(bool must_navigate) const override {
+    bool has_user_takeoff(bool must_navigate) const override
+    {
         return !must_navigate;
     }
     bool allows_autotune() const override { return true; }
     bool allows_flip() const override { return true; }
 
 protected:
-
     const char *name() const override { return "ALT_HOLD"; }
     const char *name4() const override { return "ALTH"; }
 
 private:
-
 };
 
-
-class ModeAuto : public Mode {
+class ModeAuto : public Mode
+{
 
 public:
     // inherit constructor
@@ -364,14 +369,14 @@ public:
 
     bool loiter_start();
     void rtl_start();
-    void takeoff_start(const Location& dest_loc);
-    void wp_start(const Location& dest_loc);
+    void takeoff_start(const Location &dest_loc);
+    void wp_start(const Location &dest_loc);
     void land_start();
-    void land_start(const Vector3f& destination);
+    void land_start(const Vector3f &destination);
     void circle_movetoedge_start(const Location &circle_center, float radius_m);
     void circle_start();
-    void spline_start(const Vector3f& destination, bool stopped_at_start, AC_WPNav::spline_segment_end_type seg_end_type, const Vector3f& next_spline_destination);
-    void spline_start(const Location& destination, bool stopped_at_start, AC_WPNav::spline_segment_end_type seg_end_type, const Location& next_destination);
+    void spline_start(const Vector3f &destination, bool stopped_at_start, AC_WPNav::spline_segment_end_type seg_end_type, const Vector3f &next_spline_destination);
+    void spline_start(const Location &destination, bool stopped_at_start, AC_WPNav::spline_segment_end_type seg_end_type, const Location &next_destination);
     void nav_guided_start();
 
     bool is_landing() const override;
@@ -387,7 +392,7 @@ public:
     void payload_place_start();
 
     // for GCS_MAVLink to call:
-    bool do_guided(const AP_Mission::Mission_Command& cmd);
+    bool do_guided(const AP_Mission::Mission_Command &cmd);
 
     AP_Mission mission{
         FUNCTOR_BIND_MEMBER(&ModeAuto::start_command, bool, const AP_Mission::Mission_Command &),
@@ -395,27 +400,26 @@ public:
         FUNCTOR_BIND_MEMBER(&ModeAuto::exit_mission, void)};
 
 protected:
-
     const char *name() const override { return "AUTO"; }
     const char *name4() const override { return "AUTO"; }
 
     uint32_t wp_distance() const override;
     int32_t wp_bearing() const override;
-    float crosstrack_error() const override { return wp_nav->crosstrack_error();}
+    float crosstrack_error() const override { return wp_nav->crosstrack_error(); }
     bool get_wp(Location &loc) override;
 
 private:
-
-    enum class Options : int32_t {
-        AllowArming                        = (1 << 0U),
+    enum class Options : int32_t
+    {
+        AllowArming = (1 << 0U),
         AllowTakeOffWithoutRaisingThrottle = (1 << 1U),
-        IgnorePilotYaw                     = (1 << 2U),
+        IgnorePilotYaw = (1 << 2U),
     };
 
     bool use_pilot_yaw(void) const;
 
-    bool start_command(const AP_Mission::Mission_Command& cmd);
-    bool verify_command(const AP_Mission::Mission_Command& cmd);
+    bool start_command(const AP_Mission::Mission_Command &cmd);
+    bool verify_command(const AP_Mission::Mission_Command &cmd);
     void exit_mission();
 
     void takeoff_run();
@@ -428,71 +432,72 @@ private:
     void loiter_run();
     void loiter_to_alt_run();
 
-    Location loc_from_cmd(const AP_Mission::Mission_Command& cmd) const;
+    Location loc_from_cmd(const AP_Mission::Mission_Command &cmd) const;
 
-    void payload_place_start(const Vector3f& destination);
+    void payload_place_start(const Vector3f &destination);
     void payload_place_run();
     bool payload_place_run_should_run();
     void payload_place_run_loiter();
     void payload_place_run_descend();
     void payload_place_run_release();
 
-    AutoMode _mode = Auto_TakeOff;   // controls which auto controller is run
+    AutoMode _mode = Auto_TakeOff; // controls which auto controller is run
 
-    Location terrain_adjusted_location(const AP_Mission::Mission_Command& cmd) const;
+    Location terrain_adjusted_location(const AP_Mission::Mission_Command &cmd) const;
 
-    void do_takeoff(const AP_Mission::Mission_Command& cmd);
-    void do_nav_wp(const AP_Mission::Mission_Command& cmd);
-    void do_land(const AP_Mission::Mission_Command& cmd);
-    void do_loiter_unlimited(const AP_Mission::Mission_Command& cmd);
-    void do_circle(const AP_Mission::Mission_Command& cmd);
-    void do_loiter_time(const AP_Mission::Mission_Command& cmd);
-    void do_loiter_to_alt(const AP_Mission::Mission_Command& cmd);
-    void do_spline_wp(const AP_Mission::Mission_Command& cmd);
+    void do_takeoff(const AP_Mission::Mission_Command &cmd);
+    void do_nav_wp(const AP_Mission::Mission_Command &cmd);
+    void do_land(const AP_Mission::Mission_Command &cmd);
+    void do_loiter_unlimited(const AP_Mission::Mission_Command &cmd);
+    void do_circle(const AP_Mission::Mission_Command &cmd);
+    void do_loiter_time(const AP_Mission::Mission_Command &cmd);
+    void do_loiter_to_alt(const AP_Mission::Mission_Command &cmd);
+    void do_spline_wp(const AP_Mission::Mission_Command &cmd);
 #if NAV_GUIDED == ENABLED
-    void do_nav_guided_enable(const AP_Mission::Mission_Command& cmd);
-    void do_guided_limits(const AP_Mission::Mission_Command& cmd);
+    void do_nav_guided_enable(const AP_Mission::Mission_Command &cmd);
+    void do_guided_limits(const AP_Mission::Mission_Command &cmd);
 #endif
-    void do_nav_delay(const AP_Mission::Mission_Command& cmd);
-    void do_wait_delay(const AP_Mission::Mission_Command& cmd);
-    void do_within_distance(const AP_Mission::Mission_Command& cmd);
-    void do_yaw(const AP_Mission::Mission_Command& cmd);
-    void do_change_speed(const AP_Mission::Mission_Command& cmd);
-    void do_set_home(const AP_Mission::Mission_Command& cmd);
-    void do_roi(const AP_Mission::Mission_Command& cmd);
-    void do_mount_control(const AP_Mission::Mission_Command& cmd);
+    void do_nav_delay(const AP_Mission::Mission_Command &cmd);
+    void do_wait_delay(const AP_Mission::Mission_Command &cmd);
+    void do_within_distance(const AP_Mission::Mission_Command &cmd);
+    void do_yaw(const AP_Mission::Mission_Command &cmd);
+    void do_change_speed(const AP_Mission::Mission_Command &cmd);
+    void do_set_home(const AP_Mission::Mission_Command &cmd);
+    void do_roi(const AP_Mission::Mission_Command &cmd);
+    void do_mount_control(const AP_Mission::Mission_Command &cmd);
 #if PARACHUTE == ENABLED
-    void do_parachute(const AP_Mission::Mission_Command& cmd);
+    void do_parachute(const AP_Mission::Mission_Command &cmd);
 #endif
 #if WINCH_ENABLED == ENABLED
-    void do_winch(const AP_Mission::Mission_Command& cmd);
+    void do_winch(const AP_Mission::Mission_Command &cmd);
 #endif
-    void do_payload_place(const AP_Mission::Mission_Command& cmd);
+    void do_payload_place(const AP_Mission::Mission_Command &cmd);
     void do_RTL(void);
 
     bool verify_takeoff();
     bool verify_land();
     bool verify_payload_place();
     bool verify_loiter_unlimited();
-    bool verify_loiter_time(const AP_Mission::Mission_Command& cmd);
+    bool verify_loiter_time(const AP_Mission::Mission_Command &cmd);
     bool verify_loiter_to_alt() const;
     bool verify_RTL();
     bool verify_wait_delay();
     bool verify_within_distance();
     bool verify_yaw();
-    bool verify_nav_wp(const AP_Mission::Mission_Command& cmd);
-    bool verify_circle(const AP_Mission::Mission_Command& cmd);
-    bool verify_spline_wp(const AP_Mission::Mission_Command& cmd);
+    bool verify_nav_wp(const AP_Mission::Mission_Command &cmd);
+    bool verify_circle(const AP_Mission::Mission_Command &cmd);
+    bool verify_spline_wp(const AP_Mission::Mission_Command &cmd);
 #if NAV_GUIDED == ENABLED
-    bool verify_nav_guided_enable(const AP_Mission::Mission_Command& cmd);
+    bool verify_nav_guided_enable(const AP_Mission::Mission_Command &cmd);
 #endif
-    bool verify_nav_delay(const AP_Mission::Mission_Command& cmd);
+    bool verify_nav_delay(const AP_Mission::Mission_Command &cmd);
 
     // Loiter control
-    uint16_t loiter_time_max;                // How long we should stay in Loiter Mode for mission scripting (time in seconds)
-    uint32_t loiter_time;                    // How long have we been loitering - The start time in millis
+    uint16_t loiter_time_max; // How long we should stay in Loiter Mode for mission scripting (time in seconds)
+    uint32_t loiter_time;     // How long have we been loitering - The start time in millis
 
-    struct {
+    struct
+    {
         bool reached_destination_xy : 1;
         bool loiter_start_done : 1;
         bool reached_alt : 1;
@@ -501,31 +506,33 @@ private:
     } loiter_to_alt;
 
     // Delay the next navigation command
-    uint32_t nav_delay_time_max_ms;  // used for delaying the navigation commands (eg land,takeoff etc.)
+    uint32_t nav_delay_time_max_ms; // used for delaying the navigation commands (eg land,takeoff etc.)
     uint32_t nav_delay_time_start_ms;
 
     // Delay Mission Scripting Command
-    int32_t condition_value;  // used in condition commands (eg delay, change alt, etc.)
+    int32_t condition_value; // used in condition commands (eg delay, change alt, etc.)
     uint32_t condition_start;
 
-    enum class State {
+    enum class State
+    {
         FlyToLocation = 0,
         Descending = 1
     };
     State state = State::FlyToLocation;
 
-    struct {
+    struct
+    {
         PayloadPlaceStateType state = PayloadPlaceStateType_Calibrating_Hover_Start; // records state of place (descending, releasing, released, ...)
-        uint32_t hover_start_timestamp; // milliseconds
+        uint32_t hover_start_timestamp;                                              // milliseconds
         float hover_throttle_level;
         uint32_t descend_start_timestamp; // milliseconds
-        uint32_t place_start_timestamp; // milliseconds
+        uint32_t place_start_timestamp;   // milliseconds
         float descend_throttle_level;
         float descend_start_altitude;
         float descend_max; // centimetres
     } nav_payload_place;
 
-    bool waiting_to_start;  // true if waiting for vehicle to be armed or EKF origin before starting mission
+    bool waiting_to_start; // true if waiting for vehicle to be armed or EKF origin before starting mission
 };
 
 #if AUTOTUNE_ENABLED == ENABLED
@@ -547,7 +554,8 @@ protected:
     void log_pids() override;
 };
 
-class ModeAutoTune : public Mode {
+class ModeAutoTune : public Mode
+{
 
 public:
     // inherit constructor
@@ -567,14 +575,13 @@ public:
     void reset();
 
 protected:
-
     const char *name() const override { return "AUTOTUNE"; }
     const char *name4() const override { return "ATUN"; }
 };
 #endif
 
-
-class ModeBrake : public Mode {
+class ModeBrake : public Mode
+{
 
 public:
     // inherit constructor
@@ -592,21 +599,18 @@ public:
     void timeout_to_loiter_ms(uint32_t timeout_ms);
 
 protected:
-
     const char *name() const override { return "BRAKE"; }
     const char *name4() const override { return "BRAK"; }
 
 private:
-
     void init_target();
 
     uint32_t _timeout_start;
     uint32_t _timeout_ms;
-
 };
 
-
-class ModeCircle : public Mode {
+class ModeCircle : public Mode
+{
 
 public:
     // inherit constructor
@@ -622,7 +626,6 @@ public:
     bool is_autopilot() const override { return true; }
 
 protected:
-
     const char *name() const override { return "CIRCLE"; }
     const char *name4() const override { return "CIRC"; }
 
@@ -630,14 +633,13 @@ protected:
     int32_t wp_bearing() const override;
 
 private:
-
     // Circle
     bool pilot_yaw_override = false; // true if pilot is overriding yaw
     bool speed_changing = false;     // true when the roll stick is being held to facilitate stopping at 0 rate
 };
 
-
-class ModeDrift : public Mode {
+class ModeDrift : public Mode
+{
 
 public:
     // inherit constructor
@@ -653,18 +655,15 @@ public:
     bool is_autopilot() const override { return false; }
 
 protected:
-
     const char *name() const override { return "DRIFT"; }
     const char *name4() const override { return "DRIF"; }
 
 private:
-
     float get_throttle_assist(float velz, float pilot_throttle_scaled);
-
 };
 
-
-class ModeFlip : public Mode {
+class ModeFlip : public Mode
+{
 
 public:
     // inherit constructor
@@ -680,16 +679,15 @@ public:
     bool is_autopilot() const override { return false; }
 
 protected:
-
     const char *name() const override { return "FLIP"; }
     const char *name4() const override { return "FLIP"; }
 
 private:
-
     // Flip
-    Vector3f orig_attitude;         // original vehicle attitude before flip
+    Vector3f orig_attitude; // original vehicle attitude before flip
 
-    enum class FlipState : uint8_t {
+    enum class FlipState : uint8_t
+    {
         Start,
         Roll,
         Pitch_A,
@@ -698,12 +696,11 @@ private:
         Abandon
     };
     FlipState _state;               // current state of flip
-    Mode::Number   orig_control_mode;   // flight mode when flip was initated
-    uint32_t  start_time_ms;          // time since flip began
-    int8_t    roll_dir;            // roll direction (-1 = roll left, 1 = roll right)
-    int8_t    pitch_dir;           // pitch direction (-1 = pitch forward, 1 = pitch back)
+    Mode::Number orig_control_mode; // flight mode when flip was initated
+    uint32_t start_time_ms;         // time since flip began
+    int8_t roll_dir;                // roll direction (-1 = roll left, 1 = roll right)
+    int8_t pitch_dir;               // pitch direction (-1 = pitch forward, 1 = pitch back)
 };
-
 
 #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
 /*
@@ -711,7 +708,8 @@ private:
   optical flow directly, avoiding the need for a rangefinder
  */
 
-class ModeFlowHold : public Mode {
+class ModeFlowHold : public Mode
+{
 public:
     // need a constructor for parameters
     ModeFlowHold(void);
@@ -724,7 +722,8 @@ public:
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(bool from_gcs) const override { return true; };
     bool is_autopilot() const override { return false; }
-    bool has_user_takeoff(bool must_navigate) const override {
+    bool has_user_takeoff(bool must_navigate) const override
+    {
         return !must_navigate;
     }
     bool allows_flip() const override { return true; }
@@ -736,9 +735,9 @@ protected:
     const char *name4() const override { return "FHLD"; }
 
 private:
-
     // FlowHold states
-    enum FlowHoldModeState {
+    enum FlowHoldModeState
+    {
         FlowHold_MotorStopped,
         FlowHold_Takeoff,
         FlowHold_Flying,
@@ -764,8 +763,8 @@ private:
     AP_Float flow_max;
     AC_PI_2D flow_pi_xy{0.2f, 0.3f, 3000, 5, 0.0025f};
     AP_Float flow_filter_hz;
-    AP_Int8  flow_min_quality;
-    AP_Int8  brake_rate_dps;
+    AP_Int8 flow_min_quality;
+    AP_Int8 brake_rate_dps;
 
     float quality_filtered;
 
@@ -793,8 +792,8 @@ private:
 };
 #endif // OPTFLOW
 
-
-class ModeGuided : public Mode {
+class ModeGuided : public Mode
+{
 
 public:
     // inherit constructor
@@ -814,11 +813,11 @@ public:
     bool requires_terrain_failsafe() const override { return true; }
 
     void set_angle(const Quaternion &q, float climb_rate_cms_or_thrust, bool use_yaw_rate, float yaw_rate_rads, bool use_thrust);
-    bool set_destination(const Vector3f& destination, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false, bool terrain_alt = false);
-    bool set_destination(const Location& dest_loc, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false);
+    bool set_destination(const Vector3f &destination, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false, bool terrain_alt = false);
+    bool set_destination(const Location &dest_loc, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false);
     bool get_wp(Location &loc) override;
-    void set_velocity(const Vector3f& velocity, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false, bool log_request = true);
-    bool set_destination_posvel(const Vector3f& destination, const Vector3f& velocity, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false);
+    void set_velocity(const Vector3f &velocity, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false, bool log_request = true);
+    bool set_destination_posvel(const Vector3f &destination, const Vector3f &velocity, bool use_yaw = false, float yaw_cd = 0.0, bool use_yaw_rate = false, float yaw_rate_cds = 0.0, bool yaw_relative = false);
 
     void limit_clear();
     void limit_init_time_and_pos();
@@ -835,7 +834,6 @@ public:
     void angle_control_run();
 
 protected:
-
     const char *name() const override { return "GUIDED"; }
     const char *name4() const override { return "GUID"; }
 
@@ -844,12 +842,12 @@ protected:
     float crosstrack_error() const override;
 
 private:
-
     // enum for GUID_OPTIONS parameter
-    enum class Options : int32_t {
+    enum class Options : int32_t
+    {
         AllowArmingFromTX = (1U << 0),
         // this bit is still available, pilot yaw was mapped to bit 2 for symmetry with auto
-        IgnorePilotYaw    = (1U << 2),
+        IgnorePilotYaw = (1U << 2),
     };
 
     void pos_control_start();
@@ -859,18 +857,17 @@ private:
     void pos_control_run();
     void vel_control_run();
     void posvel_control_run();
-    void set_desired_velocity_with_accel_and_fence_limits(const Vector3f& vel_des);
+    void set_desired_velocity_with_accel_and_fence_limits(const Vector3f &vel_des);
     void set_yaw_state(bool use_yaw, float yaw_cd, bool use_yaw_rate, float yaw_rate_cds, bool relative_angle);
     bool use_pilot_yaw(void) const;
 
     // controls which controller is run (pos or vel):
     GuidedMode guided_mode = Guided_TakeOff;
-    bool send_notification;     // used to send one time notification to ground station
-
+    bool send_notification; // used to send one time notification to ground station
 };
 
-
-class ModeGuidedNoGPS : public ModeGuided {
+class ModeGuidedNoGPS : public ModeGuided
+{
 
 public:
     // inherit constructor
@@ -885,16 +882,14 @@ public:
     bool is_autopilot() const override { return true; }
 
 protected:
-
     const char *name() const override { return "GUIDED_NOGPS"; }
     const char *name4() const override { return "GNGP"; }
 
 private:
-
 };
 
-
-class ModeLand : public Mode {
+class ModeLand : public Mode
+{
 
 public:
     // inherit constructor
@@ -919,12 +914,10 @@ public:
     void set_land_pause(bool new_value) { land_pause = new_value; }
 
 protected:
-
     const char *name() const override { return "LAND"; }
     const char *name4() const override { return "LAND"; }
 
 private:
-
     void gps_run();
     void nogps_run();
 
@@ -934,8 +927,8 @@ private:
     bool land_pause;
 };
 
-
-class ModeLoiter : public Mode {
+class ModeLoiter : public Mode
+{
 
 public:
     // inherit constructor
@@ -953,11 +946,13 @@ public:
     bool allows_autotune() const override { return true; }
 
 #if PRECISION_LANDING == ENABLED
-    void set_precision_loiter_enabled(bool value) { _precision_loiter_enabled = value; }
+    void set_precision_loiter_enabled(bool value)
+    {
+        _precision_loiter_enabled = value;
+    }
 #endif
 
 protected:
-
     const char *name() const override { return "LOITER"; }
     const char *name4() const override { return "LOIT"; }
 
@@ -970,15 +965,13 @@ protected:
 #endif
 
 private:
-
 #if PRECISION_LANDING == ENABLED
     bool _precision_loiter_enabled;
 #endif
-
 };
 
-
-class ModePosHold : public Mode {
+class ModePosHold : public Mode
+{
 
 public:
     // inherit constructor
@@ -996,12 +989,10 @@ public:
     bool allows_autotune() const override { return true; }
 
 protected:
-
     const char *name() const override { return "POSHOLD"; }
     const char *name4() const override { return "PHLD"; }
 
 private:
-
     void update_pilot_lean_angle(float &lean_angle_filtered, float &lean_angle_raw);
     float mix_controls(float mix_ratio, float first_control, float second_control);
     void update_brake_angle_from_velocity(float &brake_angle, float velocity);
@@ -1011,8 +1002,9 @@ private:
     void roll_controller_to_pilot_override();
     void pitch_controller_to_pilot_override();
 
-    enum class RPMode {
-        PILOT_OVERRIDE=0,            // pilot is controlling this axis (i.e. roll or pitch)
+    enum class RPMode
+    {
+        PILOT_OVERRIDE = 0,          // pilot is controlling this axis (i.e. roll or pitch)
         BRAKE,                       // this axis is braking towards zero
         BRAKE_READY_TO_LOITER,       // this axis has completed braking and is ready to enter loiter mode (both modes must be this value before moving to next stage)
         BRAKE_TO_LOITER,             // both vehicle's axis (roll and pitch) are transitioning from braking to loiter mode (braking and loiter controls are mixed)
@@ -1023,44 +1015,43 @@ private:
     RPMode roll_mode;
     RPMode pitch_mode;
 
-    uint8_t braking_time_updated_roll   : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
-    uint8_t braking_time_updated_pitch  : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+    uint8_t braking_time_updated_roll : 1;  // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+    uint8_t braking_time_updated_pitch : 1; // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
 
     // pilot input related variables
-    float pilot_roll;                         // pilot requested roll angle (filtered to slow returns to zero)
-    float pilot_pitch;                        // pilot requested roll angle (filtered to slow returns to zero)
+    float pilot_roll;  // pilot requested roll angle (filtered to slow returns to zero)
+    float pilot_pitch; // pilot requested roll angle (filtered to slow returns to zero)
 
     // braking related variables
-    float brake_gain;                           // gain used during conversion of vehicle's velocity to lean angle during braking (calculated from brake_rate)
-    float brake_roll;                           // target roll angle during braking periods
-    float brake_pitch;                          // target pitch angle during braking periods
-    int16_t brake_timeout_roll;                 // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
-    int16_t brake_timeout_pitch;                // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
-    float brake_angle_max_roll;                 // maximum lean angle achieved during braking.  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
-    float brake_angle_max_pitch;                // maximum lean angle achieved during braking  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
-    int16_t brake_to_loiter_timer;              // cycles to mix brake and loiter controls in POSHOLD_BRAKE_TO_LOITER
+    float brake_gain;              // gain used during conversion of vehicle's velocity to lean angle during braking (calculated from brake_rate)
+    float brake_roll;              // target roll angle during braking periods
+    float brake_pitch;             // target pitch angle during braking periods
+    int16_t brake_timeout_roll;    // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+    int16_t brake_timeout_pitch;   // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+    float brake_angle_max_roll;    // maximum lean angle achieved during braking.  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+    float brake_angle_max_pitch;   // maximum lean angle achieved during braking  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+    int16_t brake_to_loiter_timer; // cycles to mix brake and loiter controls in POSHOLD_BRAKE_TO_LOITER
 
     // loiter related variables
-    int16_t controller_to_pilot_timer_roll;     // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
-    int16_t controller_to_pilot_timer_pitch;    // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
-    float controller_final_roll;                // final roll angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
-    float controller_final_pitch;               // final pitch angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+    int16_t controller_to_pilot_timer_roll;  // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    int16_t controller_to_pilot_timer_pitch; // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    float controller_final_roll;             // final roll angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+    float controller_final_pitch;            // final pitch angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
 
     // wind compensation related variables
-    Vector2f wind_comp_ef;                      // wind compensation in earth frame, filtered lean angles from position controller
-    float wind_comp_roll;                       // roll angle to compensate for wind
-    float wind_comp_pitch;                      // pitch angle to compensate for wind
-    uint16_t wind_comp_start_timer;             // counter to delay start of wind compensation for a short time after loiter is engaged
-    int8_t  wind_comp_timer;                    // counter to reduce wind comp roll/pitch lean angle calcs to 10hz
+    Vector2f wind_comp_ef;          // wind compensation in earth frame, filtered lean angles from position controller
+    float wind_comp_roll;           // roll angle to compensate for wind
+    float wind_comp_pitch;          // pitch angle to compensate for wind
+    uint16_t wind_comp_start_timer; // counter to delay start of wind compensation for a short time after loiter is engaged
+    int8_t wind_comp_timer;         // counter to reduce wind comp roll/pitch lean angle calcs to 10hz
 
     // final output
-    float roll;   // final roll angle sent to attitude controller
-    float pitch;  // final pitch angle sent to attitude controller
-
+    float roll;  // final roll angle sent to attitude controller
+    float pitch; // final pitch angle sent to attitude controller
 };
 
-
-class ModeRTL : public Mode {
+class ModeRTL : public Mode
+{
 
 public:
     // inherit constructor
@@ -1068,7 +1059,8 @@ public:
     Number mode_number() const override { return Number::RTL; }
 
     bool init(bool ignore_checks) override;
-    void run() override {
+    void run() override
+    {
         return run(true);
     }
     void run(bool disarm_on_land);
@@ -1084,7 +1076,8 @@ public:
     bool get_wp(Location &loc) override;
 
     // RTL states
-    enum RTLState {
+    enum RTLState
+    {
         RTL_Starting,
         RTL_InitialClimb,
         RTL_ReturnHome,
@@ -1102,21 +1095,21 @@ public:
     void restart_without_terrain();
 
     // enum for RTL_ALT_TYPE parameter
-    enum class RTLAltType {
+    enum class RTLAltType
+    {
         RTL_ALTTYPE_RELATIVE = 0,
         RTL_ALTTYPE_TERRAIN = 1
     };
     ModeRTL::RTLAltType get_alt_type() const;
 
 protected:
-
     const char *name() const override { return "RTL"; }
     const char *name4() const override { return "RTL "; }
 
     // for reporting to GCS
     uint32_t wp_distance() const override;
     int32_t wp_bearing() const override;
-    float crosstrack_error() const override { return wp_nav->crosstrack_error();}
+    float crosstrack_error() const override { return wp_nav->crosstrack_error(); }
 
     void descent_start();
     void descent_run();
@@ -1126,7 +1119,6 @@ protected:
     void set_descent_target_alt(uint32_t alt) { rtl_path.descent_target.alt = alt; }
 
 private:
-
     void climb_start();
     void return_start();
     void climb_return_run();
@@ -1135,10 +1127,11 @@ private:
     void build_path();
     void compute_return_target();
 
-    RTLState _state = RTL_InitialClimb;  // records state of rtl (initial climb, returning home, etc)
-    bool _state_complete = false; // set to true if the current state is completed
+    RTLState _state = RTL_InitialClimb; // records state of rtl (initial climb, returning home, etc)
+    bool _state_complete = false;       // set to true if the current state is completed
 
-    struct {
+    struct
+    {
         // NEU w/ Z element alt-above-ekf-origin unless use_terrain is true in which case Z element is alt-above-terrain
         Location origin_point;
         Location climb_target;
@@ -1148,7 +1141,8 @@ private:
     } rtl_path;
 
     // return target alt type
-    enum class ReturnTargetAltType {
+    enum class ReturnTargetAltType
+    {
         RELATIVE = 0,
         RANGEFINDER = 1,
         TERRAINDATABASE = 2
@@ -1160,17 +1154,17 @@ private:
     bool terrain_following_allowed;
 
     // enum for RTL_OPTIONS parameter
-    enum class Options : int32_t {
+    enum class Options : int32_t
+    {
         // First pair of bits are still available, pilot yaw was mapped to bit 2 for symmetry with auto
-        IgnorePilotYaw    = (1U << 2),
+        IgnorePilotYaw = (1U << 2),
     };
 
     bool use_pilot_yaw(void) const;
-
 };
 
-
-class ModeSmartRTL : public ModeRTL {
+class ModeSmartRTL : public ModeRTL
+{
 
 public:
     // inherit constructor
@@ -1191,7 +1185,6 @@ public:
     bool is_landing() const override;
 
 protected:
-
     const char *name() const override { return "SMARTRTL"; }
     const char *name4() const override { return "SRTL"; }
 
@@ -1199,10 +1192,9 @@ protected:
     bool get_wp(Location &loc) override;
     uint32_t wp_distance() const override;
     int32_t wp_bearing() const override;
-    float crosstrack_error() const override { return wp_nav->crosstrack_error();}
+    float crosstrack_error() const override { return wp_nav->crosstrack_error(); }
 
 private:
-
     void wait_cleanup_run();
     void path_follow_run();
     void pre_land_position_run();
@@ -1215,8 +1207,8 @@ private:
     uint32_t path_follow_last_pop_fail_ms;
 };
 
-
-class ModeSport : public Mode {
+class ModeSport : public Mode
+{
 
 public:
     // inherit constructor
@@ -1230,21 +1222,20 @@ public:
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(bool from_gcs) const override { return true; };
     bool is_autopilot() const override { return false; }
-    bool has_user_takeoff(bool must_navigate) const override {
+    bool has_user_takeoff(bool must_navigate) const override
+    {
         return !must_navigate;
     }
 
 protected:
-
     const char *name() const override { return "SPORT"; }
     const char *name4() const override { return "SPRT"; }
 
 private:
-
 };
 
-
-class ModeStabilize : public Mode {
+class ModeStabilize : public Mode
+{
 
 public:
     // inherit constructor
@@ -1262,25 +1253,24 @@ public:
     bool allows_flip() const override { return true; }
 
 protected:
-
     const char *name() const override { return "STABILIZE"; }
     const char *name4() const override { return "STAB"; }
 
 private:
-
 };
 
 class ModeDrive : public Mode {
 
 public:
-
-	const char *name() const override { return "DRIVEMODE"; }
-	const char *name4() const override { return "DRIV"; }
-    float signal_output [] {0,0}
+  using Mode::Mode;
+  Number mode_number() const override{return Number::DRIVE;}
+  float signal_output [] = {0,0};
 
 	// methods that affect movement of the vehicle in this mode
-	void update() override;
-    void get_pilot_input() override;
+  bool init(bool ignore_checks) override;
+	virtual void run() override;
+  void exit();
+  void get_pilot_input();
 
 	// attributes for mavlink system status reporting
 	bool has_manual_input() const override { return true; }
@@ -1289,21 +1279,22 @@ public:
 	// steering requires velocity but not position
 	bool requires_position() const override { return false; }
 	bool requires_velocity() const override { return true; }
-
-    // return desired lateral acceleration
-    float get_desired_lat_accel() const override { return _desired_lat_accel; }
-    
-    void exit() override;
+  bool has_manual_throttle() const override { return true; }
+  bool is_autopilot() const override { return false; }
+  bool allows_arming(bool from_gcs) const override { return true; };
+  
+protected:
+  const char *name() const override { return "DRIVEMODE"; }
+	const char *name4() const override { return "DRIV"; }
     
 private: 
-
-     float _desired_lat_accel;   // desired lateral acceleration calculated from pilot steering input
      const int ThrottleOut = 0; 
      const int SteeringOut = 1;
 };
 
 #if FRAME_CONFIG == HELI_FRAME
-class ModeStabilize_Heli : public ModeStabilize {
+class ModeStabilize_Heli : public ModeStabilize
+{
 
 public:
     // inherit constructor
@@ -1313,13 +1304,12 @@ public:
     void run() override;
 
 protected:
-
 private:
-
 };
 #endif
 
-class ModeSystemId : public Mode {
+class ModeSystemId : public Mode
+{
 
 public:
     ModeSystemId(void);
@@ -1338,55 +1328,56 @@ public:
     static const struct AP_Param::GroupInfo var_info[];
 
 protected:
-
     const char *name() const override { return "SYSTEMID"; }
     const char *name4() const override { return "SYSI"; }
 
 private:
-
     void log_data() const;
     float waveform(float time);
 
-    enum class AxisType {
-        NONE = 0,           // none
-        INPUT_ROLL = 1,     // angle input roll axis is being excited
-        INPUT_PITCH = 2,    // angle pitch axis is being excited
-        INPUT_YAW = 3,      // angle yaw axis is being excited
-        RECOVER_ROLL = 4,   // angle roll axis is being excited
-        RECOVER_PITCH = 5,  // angle pitch axis is being excited
-        RECOVER_YAW = 6,    // angle yaw axis is being excited
-        RATE_ROLL = 7,      // rate roll axis is being excited
-        RATE_PITCH = 8,     // rate pitch axis is being excited
-        RATE_YAW = 9,       // rate yaw axis is being excited
-        MIX_ROLL = 10,      // mixer roll axis is being excited
-        MIX_PITCH = 11,     // mixer pitch axis is being excited
-        MIX_YAW = 12,       // mixer pitch axis is being excited
-        MIX_THROTTLE = 13,  // mixer throttle axis is being excited
+    enum class AxisType
+    {
+        NONE = 0,          // none
+        INPUT_ROLL = 1,    // angle input roll axis is being excited
+        INPUT_PITCH = 2,   // angle pitch axis is being excited
+        INPUT_YAW = 3,     // angle yaw axis is being excited
+        RECOVER_ROLL = 4,  // angle roll axis is being excited
+        RECOVER_PITCH = 5, // angle pitch axis is being excited
+        RECOVER_YAW = 6,   // angle yaw axis is being excited
+        RATE_ROLL = 7,     // rate roll axis is being excited
+        RATE_PITCH = 8,    // rate pitch axis is being excited
+        RATE_YAW = 9,      // rate yaw axis is being excited
+        MIX_ROLL = 10,     // mixer roll axis is being excited
+        MIX_PITCH = 11,    // mixer pitch axis is being excited
+        MIX_YAW = 12,      // mixer pitch axis is being excited
+        MIX_THROTTLE = 13, // mixer throttle axis is being excited
     };
 
-    AP_Int8 axis;               // Controls which axis are being excited. Set to non-zero to display other parameters
-    AP_Float waveform_magnitude;// Magnitude of chirp waveform
-    AP_Float frequency_start;   // Frequency at the start of the chirp
-    AP_Float frequency_stop;    // Frequency at the end of the chirp
-    AP_Float time_fade_in;      // Time to reach maximum amplitude of chirp
-    AP_Float time_record;       // Time taken to complete the chirp waveform
-    AP_Float time_fade_out;     // Time to reach zero amplitude after chirp finishes
+    AP_Int8 axis;                // Controls which axis are being excited. Set to non-zero to display other parameters
+    AP_Float waveform_magnitude; // Magnitude of chirp waveform
+    AP_Float frequency_start;    // Frequency at the start of the chirp
+    AP_Float frequency_stop;     // Frequency at the end of the chirp
+    AP_Float time_fade_in;       // Time to reach maximum amplitude of chirp
+    AP_Float time_record;        // Time taken to complete the chirp waveform
+    AP_Float time_fade_out;      // Time to reach zero amplitude after chirp finishes
 
-    bool att_bf_feedforward;    // Setting of attitude_control->get_bf_feedforward
-    float waveform_time;        // Time reference for waveform
-    float waveform_sample;      // Current waveform sample
-    float waveform_freq_rads;   // Instantaneous waveform frequency
-    float time_const_freq;      // Time at constant frequency before chirp starts
-    int8_t log_subsample;       // Subsample multiple for logging.
+    bool att_bf_feedforward;  // Setting of attitude_control->get_bf_feedforward
+    float waveform_time;      // Time reference for waveform
+    float waveform_sample;    // Current waveform sample
+    float waveform_freq_rads; // Instantaneous waveform frequency
+    float time_const_freq;    // Time at constant frequency before chirp starts
+    int8_t log_subsample;     // Subsample multiple for logging.
 
     // System ID states
-    enum class SystemIDModeState {
+    enum class SystemIDModeState
+    {
         SYSTEMID_STATE_STOPPED,
         SYSTEMID_STATE_TESTING
     } systemid_state;
 };
 
-class ModeThrow : public Mode {
+class ModeThrow : public Mode
+{
 
 public:
     // inherit constructor
@@ -1402,30 +1393,31 @@ public:
     bool is_autopilot() const override { return false; }
 
     // Throw types
-    enum class ThrowType {
+    enum class ThrowType
+    {
         Upward = 0,
         Drop = 1
     };
 
-    enum class PreThrowMotorState {
+    enum class PreThrowMotorState
+    {
         STOPPED = 0,
         RUNNING = 1,
     };
 
 protected:
-
     const char *name() const override { return "THROW"; }
     const char *name4() const override { return "THRW"; }
 
 private:
-
     bool throw_detected();
     bool throw_position_good();
     bool throw_height_good();
     bool throw_attitude_good();
 
     // Throw stages
-    enum ThrowModeStage {
+    enum ThrowModeStage
+    {
         Throw_Disarmed,
         Throw_Detecting,
         Throw_Uprighting,
@@ -1437,13 +1429,14 @@ private:
     ThrowModeStage prev_stage = Throw_Disarmed;
     uint32_t last_log_ms;
     bool nextmode_attempted;
-    uint32_t free_fall_start_ms;    // system time free fall was detected
-    float free_fall_start_velz;     // vertical velocity when free fall was detected
+    uint32_t free_fall_start_ms; // system time free fall was detected
+    float free_fall_start_velz;  // vertical velocity when free fall was detected
 };
 
 // modes below rely on Guided mode so must be declared at the end (instead of in alphabetical order)
 
-class ModeAvoidADSB : public ModeGuided {
+class ModeAvoidADSB : public ModeGuided
+{
 
 public:
     // inherit constructor
@@ -1458,21 +1451,19 @@ public:
     bool allows_arming(bool from_gcs) const override { return false; }
     bool is_autopilot() const override { return true; }
 
-    bool set_velocity(const Vector3f& velocity_neu);
+    bool set_velocity(const Vector3f &velocity_neu);
 
 protected:
-
     const char *name() const override { return "AVOID_ADSB"; }
     const char *name4() const override { return "AVOI"; }
 
 private:
-
 };
 
-class ModeFollow : public ModeGuided {
+class ModeFollow : public ModeGuided
+{
 
 public:
-
     // inherit constructor
     using ModeGuided::Mode;
     Number mode_number() const override { return Number::FOLLOW; }
@@ -1487,7 +1478,6 @@ public:
     bool is_autopilot() const override { return true; }
 
 protected:
-
     const char *name() const override { return "FOLLOW"; }
     const char *name4() const override { return "FOLL"; }
 
@@ -1496,10 +1486,11 @@ protected:
     uint32_t wp_distance() const override;
     int32_t wp_bearing() const override;
 
-    uint32_t last_log_ms;   // system time of last time desired velocity was logging
+    uint32_t last_log_ms; // system time of last time desired velocity was logging
 };
 
-class ModeZigZag : public Mode {        
+class ModeZigZag : public Mode
+{
 
 public:
     ModeZigZag(void);
@@ -1508,16 +1499,18 @@ public:
     using Mode::Mode;
     Number mode_number() const override { return Number::ZIGZAG; }
 
-    enum class Destination : uint8_t {
-        A,  // Destination A
-        B,  // Destination B
+    enum class Destination : uint8_t
+    {
+        A, // Destination A
+        B, // Destination B
     };
 
-    enum class Direction : uint8_t {
-        FORWARD,        // moving forward from the yaw direction
-        RIGHT,          // moving right from the yaw direction
-        BACKWARD,       // moving backward from the yaw direction
-        LEFT,           // moving left from the yaw direction
+    enum class Direction : uint8_t
+    {
+        FORWARD,  // moving forward from the yaw direction
+        RIGHT,    // moving right from the yaw direction
+        BACKWARD, // moving backward from the yaw direction
+        LEFT,     // moving left from the yaw direction
     } zigzag_direction;
 
     bool init(bool ignore_checks) override;
@@ -1543,60 +1536,60 @@ public:
     static const struct AP_Param::GroupInfo var_info[];
 
 protected:
-
     const char *name() const override { return "ZIGZAG"; }
     const char *name4() const override { return "ZIGZ"; }
 
 private:
-
     void auto_control();
     void manual_control();
     bool reached_destination();
-    bool calculate_next_dest(Destination ab_dest, bool use_wpnav_alt, Vector3f& next_dest, bool& terrain_alt) const;
+    bool calculate_next_dest(Destination ab_dest, bool use_wpnav_alt, Vector3f &next_dest, bool &terrain_alt) const;
     void spray(bool b);
-    bool calculate_side_dest(Vector3f& next_dest, bool& terrain_alt) const;
+    bool calculate_side_dest(Vector3f &next_dest, bool &terrain_alt) const;
     void move_to_side();
 
-    Vector2f dest_A;    // in NEU frame in cm relative to ekf origin
-    Vector2f dest_B;    // in NEU frame in cm relative to ekf origin
+    Vector2f dest_A;       // in NEU frame in cm relative to ekf origin
+    Vector2f dest_B;       // in NEU frame in cm relative to ekf origin
     Vector3f current_dest; // current target destination (use for resume after suspending)
     bool current_terr_alt;
 
     // parameters
-    AP_Int8  _auto_enabled;    // top level enable/disable control
+    AP_Int8 _auto_enabled; // top level enable/disable control
 #if SPRAYER_ENABLED == ENABLED
-    AP_Int8  _spray_enabled;   // auto spray enable/disable
+    AP_Int8 _spray_enabled; // auto spray enable/disable
 #endif
-    AP_Int8  _wp_delay;        // delay for zigzag waypoint
-    AP_Float _side_dist;       // sideways distance
-    AP_Int8  _direction;       // sideways direction
-    AP_Int16 _line_num;        // total number of lines
+    AP_Int8 _wp_delay;   // delay for zigzag waypoint
+    AP_Float _side_dist; // sideways distance
+    AP_Int8 _direction;  // sideways direction
+    AP_Int16 _line_num;  // total number of lines
 
-    enum ZigZagState {
+    enum ZigZagState
+    {
         STORING_POINTS, // storing points A and B, pilot has manual control
         AUTO,           // after A and B defined, pilot toggle the switch from one side to the other, vehicle flies autonomously
         MANUAL_REGAIN   // pilot toggle the switch to middle position, has manual control
     } stage;
 
-    enum AutoState {
-        MANUAL,         // not in ZigZag Auto
-        AB_MOVING,      // moving from A to B or from B to A
-        SIDEWAYS,       // moving to sideways
+    enum AutoState
+    {
+        MANUAL,    // not in ZigZag Auto
+        AB_MOVING, // moving from A to B or from B to A
+        SIDEWAYS,  // moving to sideways
     } auto_stage;
 
-    uint32_t reach_wp_time_ms = 0;  // time since vehicle reached destination (or zero if not yet reached)
-    Destination ab_dest_stored;     // store the current destination
-    bool is_auto;                   // enable zigzag auto feature which is automate both AB and sideways
-    uint16_t line_count = 0;        // current line number
-    int16_t line_num = 0;           // target line number
-    bool is_suspended;              // true if zigzag auto is suspended
+    uint32_t reach_wp_time_ms = 0; // time since vehicle reached destination (or zero if not yet reached)
+    Destination ab_dest_stored;    // store the current destination
+    bool is_auto;                  // enable zigzag auto feature which is automate both AB and sideways
+    uint16_t line_count = 0;       // current line number
+    int16_t line_num = 0;          // target line number
+    bool is_suspended;             // true if zigzag auto is suspended
 };
 
 #if MODE_AUTOROTATE_ENABLED == ENABLED
-class ModeAutorotate : public Mode {
+class ModeAutorotate : public Mode
+{
 
 public:
-
     // inherit constructor
     using Mode::Mode;
     Number mode_number() const override { return Number::AUTOROTATE; }
@@ -1609,59 +1602,62 @@ public:
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(bool from_gcs) const override { return false; };
 
-    static const struct AP_Param::GroupInfo  var_info[];
+    static const struct AP_Param::GroupInfo var_info[];
 
 protected:
-
     const char *name() const override { return "AUTOROTATE"; }
     const char *name4() const override { return "AROT"; }
 
 private:
-
     // --- Internal variables ---
-    float _initial_rpm;             // Head speed recorded at initiation of flight mode (RPM)
-    float _target_head_speed;       // The terget head main rotor head speed.  Normalised by main rotor set point
-    float _desired_v_z;             // Desired vertical
-    int32_t _pitch_target;          // Target pitch attitude to pass to attitude controller
-    uint32_t _entry_time_start_ms;  // Time remaining until entry phase moves on to glide phase
-    float _hs_decay;                // The head accerleration during the entry phase
-    float _bail_time;               // Timer for exiting the bail out phase (s)
-    uint32_t _bail_time_start_ms;   // Time at start of bail out
-    float _target_climb_rate_adjust;// Target vertical acceleration used during bail out phase
-    float _target_pitch_adjust;     // Target pitch rate used during bail out phase
+    float _initial_rpm;              // Head speed recorded at initiation of flight mode (RPM)
+    float _target_head_speed;        // The terget head main rotor head speed.  Normalised by main rotor set point
+    float _desired_v_z;              // Desired vertical
+    int32_t _pitch_target;           // Target pitch attitude to pass to attitude controller
+    uint32_t _entry_time_start_ms;   // Time remaining until entry phase moves on to glide phase
+    float _hs_decay;                 // The head accerleration during the entry phase
+    float _bail_time;                // Timer for exiting the bail out phase (s)
+    uint32_t _bail_time_start_ms;    // Time at start of bail out
+    float _target_climb_rate_adjust; // Target vertical acceleration used during bail out phase
+    float _target_pitch_adjust;      // Target pitch rate used during bail out phase
 
-    enum class Autorotation_Phase {
+    enum class Autorotation_Phase
+    {
         ENTRY,
         SS_GLIDE,
         FLARE,
         TOUCH_DOWN,
-        BAIL_OUT } phase_switch;
-        
-    enum class Navigation_Decision {
+        BAIL_OUT
+    } phase_switch;
+
+    enum class Navigation_Decision
+    {
         USER_CONTROL_STABILISED,
         STRAIGHT_AHEAD,
         INTO_WIND,
-        NEAREST_RALLY} nav_pos_switch;
+        NEAREST_RALLY
+    } nav_pos_switch;
 
     // --- Internal flags ---
-    struct controller_flags {
-            bool entry_initial             : 1;
-            bool ss_glide_initial          : 1;
-            bool flare_initial             : 1;
-            bool touch_down_initial        : 1;
-            bool straight_ahead_initial    : 1;
-            bool level_initial             : 1;
-            bool break_initial             : 1;
-            bool bail_out_initial          : 1;
-            bool bad_rpm                   : 1;
+    struct controller_flags
+    {
+        bool entry_initial : 1;
+        bool ss_glide_initial : 1;
+        bool flare_initial : 1;
+        bool touch_down_initial : 1;
+        bool straight_ahead_initial : 1;
+        bool level_initial : 1;
+        bool break_initial : 1;
+        bool bail_out_initial : 1;
+        bool bad_rpm : 1;
     } _flags;
 
-    struct message_flags {
-            bool bad_rpm                   : 1;
+    struct message_flags
+    {
+        bool bad_rpm : 1;
     } _msg_flags;
 
     //--- Internal functions ---
-    void warning_message(uint8_t message_n);    //Handles output messages to the terminal
-
+    void warning_message(uint8_t message_n); //Handles output messages to the terminal
 };
 #endif
