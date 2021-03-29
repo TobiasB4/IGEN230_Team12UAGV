@@ -570,6 +570,10 @@ void AP_MotorsMatrix::disable_enable(bool flag)
     // if want to enable
     if (flag)
     {
+        for (int i = 4; i < 6; i++)
+        {
+            motor_enabled[i] = false;
+        }
         for (int i = 0; i < 4; i++)
         {
             motor_enabled[i] = true;
@@ -577,6 +581,10 @@ void AP_MotorsMatrix::disable_enable(bool flag)
     }
     else
     {
+        for (int i = 4; i < 6; i++)
+        {
+            motor_enabled[i] = true;
+        }
         for (int i = 0; i < 4; i++)
         {
             motor_enabled[i] = false;
