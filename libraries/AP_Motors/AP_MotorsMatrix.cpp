@@ -16,6 +16,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include "AP_MotorsMatrix.h"
 #include <AP_Vehicle/AP_Vehicle.h>
+#include <../ArduCopter/Copter.h>
 
 extern const AP_HAL::HAL &hal;
 
@@ -129,7 +130,7 @@ void AP_MotorsMatrix::set_frame_class_and_type(motor_frame_class frame_class, mo
 
     init(frame_class, frame_type);
 }
-override void AP_MotorsMatrix::output_to_motors()
+void AP_MotorsMatrix::output_to_motors()
 {
     int8_t i;
 
