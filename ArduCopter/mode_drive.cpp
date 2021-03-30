@@ -1,5 +1,19 @@
 #include "Copter.h"
 
+bool ModeDrive::init(bool ignore_checks)
+{	
+	if (coptor.ap.land_complete)//check if landed
+	{
+		AP_MotorsMatrix::disable_enable(false);//turn off propellor motors, turn on drive motors
+		return true;
+	} 
+	else
+	{
+		gcs().send_text(MAV_SEVERITY_CRITICAL, "Must be landed to switch to Rover");
+		return false;//refuse to switch to rover if not landed
+	}
+}
+
 void ModeDrive::run()
 {
     if (!motors->armed())
