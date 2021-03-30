@@ -11,7 +11,8 @@ class Mode
 
 public:
     // Auto Pilot Modes enumeration
-    enum class Number : uint8_t {
+    enum class Number : uint8_t
+    {
         STABILIZE = 0,     // manual airframe angle with manual throttle
         ACRO = 1,          // manual body-frame angular rate with manual throttle
         ALT_HOLD = 2,      // manual airframe angle with automatic throttle
@@ -1264,7 +1265,7 @@ class ModeDrive : public Mode
 public:
     using Mode::Mode;
     Number mode_number() const override { return Number::DRIVE; }
-    float driveModeOutputs[] = {0, 0};
+    float driveModeOutputs[2] = {0, 0};
 
     // methods that affect movement of the vehicle in this mode
     bool init(bool ignore_checks) override;
@@ -1273,12 +1274,13 @@ public:
     void get_pilot_input();
 
     // attributes for mavlink system status reporting
-    bool has_manual_input() const override { return true; }
-    bool attitude_stabilized() const override { return false; }
+    //bool has_manual_input() const override { return true; }
+    //bool attitude_stabilized() const override { return false; }
 
     // steering requires velocity but not position
-    bool requires_position() const override { return false; }
-    bool requires_velocity() const override { return true; }
+    //bool requires_position() const override { return false; }
+    //bool requires_velocity() const override { return true; }
+    bool requires_GPS() const override { return false; }
     bool has_manual_throttle() const override { return true; }
     bool is_autopilot() const override { return false; }
     bool allows_arming(bool from_gcs) const override { return true; };
