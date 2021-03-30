@@ -172,6 +172,7 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
     case Mode::Number::DRIVE:
         ret = &mode_drive;
         break;
+#endif
 
     default:
         break;

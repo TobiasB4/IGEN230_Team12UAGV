@@ -1,17 +1,17 @@
 #include "Copter.h"
 
 bool ModeDrive::init(bool ignore_checks)
-{	
-	if (coptor.ap.land_complete)//check if landed
-	{
-		AP_MotorsMatrix::disable_enable(false);//turn off propellor motors, turn on drive motors
-		return true;
-	} 
-	else
-	{
-		gcs().send_text(MAV_SEVERITY_CRITICAL, "Must be landed to switch to Rover");
-		return false;//refuse to switch to rover if not landed
-	}
+{
+    if (copter.ap.land_complete) //check if landed
+    {
+        motors->disable_enable(false); //turn off propellor motors, turn on drive motors
+        return true;
+    }
+    else
+    {
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "Must be landed to switch to Rover");
+        return false; //refuse to switch to rover if not landed
+    }
 }
 
 void ModeDrive::run()
@@ -21,8 +21,10 @@ void ModeDrive::run()
         // Motors should be Stopped
         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);
     }
-
-    ModeDrive::get_pilot_input()
+    else
+    {
+        ModeDrive::get_pilot_input();
+    }
 }
 
 //add this prototype to class def
@@ -40,7 +42,7 @@ void ModeDrive::get_pilot_input()
     driveModeOutputs[ThrottleOut] = Mode::get_pilot_desired_throttle();
 }
 
-void exit()
+void ModeDrive::exit()
 {
-    AP_MotorsMatrix::disable_enable(true);
+    motors->disable_enable(true);
 }
