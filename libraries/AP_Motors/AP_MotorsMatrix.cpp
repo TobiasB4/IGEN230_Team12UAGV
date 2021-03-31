@@ -12,11 +12,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#pragma once
 #include <AP_HAL/AP_HAL.h>
 #include "AP_MotorsMatrix.h"
 #include <AP_Vehicle/AP_Vehicle.h>
-//#include <../ArduCopter/Copter.h>
+#include <../ArduCopter/Copter.h>
 
 extern const AP_HAL::HAL &hal;
 
@@ -172,27 +172,19 @@ void AP_MotorsMatrix::output_to_motors()
         break;
     }
 
-    // if (Copter::get_mode() != 27)
-    // {
-    // convert output to PWM and send to each motor
+    //convert output to PWM and send to each motor
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++)
     {
-        if (motor_enabled[i])
+        if (motor_enabled[i] && i != 4 && i != 5)
         {
             rc_write(i, output_to_pwm(_actuator[i]));
         }
+        else if (motor_enabled[i] && i == 4)
+        {
+            rc_write(4, output_to_pwm(ModeDrive::ThrottleOut));
+            rc_write(5, output_to_pwm(ModeDrive::SteeringOut));
+        }
     }
-    //}
-    // else
-    // {
-    //     for (i = 4; i < 6; i++)
-    //     {
-    //         if (motor_enabled[i])
-    //         {
-    //             rc_write(i, output_to_pwm(ModeDrive::driveModeOutputs[i - 4]));
-    //         }
-    //     }
-    // }
 }
 
 // get_motor_mask - returns a bitmask of which outputs are being used for motors (1 means being used)

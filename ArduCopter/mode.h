@@ -40,6 +40,7 @@ public:
         DRIVE = 27,        // Drive mode
     };
 
+    //friend class AP_MotorsMatrix;
     // constructor
     Mode(void);
 
@@ -1265,7 +1266,8 @@ class ModeDrive : public Mode
 public:
     using Mode::Mode;
     Number mode_number() const override { return Number::DRIVE; }
-    float driveModeOutputs[2] = {0, 0};
+    static float ThrottleOut;
+    static float SteeringOut;
 
     // methods that affect movement of the vehicle in this mode
     bool init(bool ignore_checks) override;
@@ -1290,8 +1292,6 @@ protected:
     const char *name4() const override { return "DRIV"; }
 
 private:
-    const int ThrottleOut = 0;
-    const int SteeringOut = 1;
 };
 
 #if FRAME_CONFIG == HELI_FRAME
