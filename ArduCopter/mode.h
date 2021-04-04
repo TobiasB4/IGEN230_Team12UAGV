@@ -1273,7 +1273,6 @@ public:
     bool init(bool ignore_checks) override;
     virtual void run() override;
     void exit();
-    void get_pilot_input();
 
     // attributes for mavlink system status reporting
     //bool has_manual_input() const override { return true; }
@@ -1292,6 +1291,8 @@ protected:
     const char *name4() const override { return "DRIV"; }
 
 private:
+    void get_pilot_input();
+    void convert_input();
 };
 
 #if FRAME_CONFIG == HELI_FRAME

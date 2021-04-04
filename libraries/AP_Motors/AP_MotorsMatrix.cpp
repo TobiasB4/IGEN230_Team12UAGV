@@ -181,8 +181,8 @@ void AP_MotorsMatrix::output_to_motors()
         }
         else if (motor_enabled[i] && i == 4)
         {
-            rc_write(4, output_to_pwm(ModeDrive::ThrottleOut));
-            rc_write(5, output_to_pwm(ModeDrive::SteeringOut));
+            rc_write(4, ModeDrive::ThrottleOut);
+            rc_write(5, ModeDrive::SteeringOut);
         }
     }
 }
@@ -571,6 +571,8 @@ void AP_MotorsMatrix::disable_enable(bool flag)
         {
             motor_enabled[i] = true;
         }
+        rc_write(4, 0);
+        rc_write(5, 0);
     }
     else
     {
